@@ -2,7 +2,6 @@ import java.util.Scanner;
 
 public class main {
 	    public static void main(String[] args){
-
 	         //Please Enter Your Code Here
 	         Scanner scan = new Scanner(System.in);
 	         	int[] dx = { -1,0,1,0 };
