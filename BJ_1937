@@ -1,0 +1,71 @@
+/*
+* 백준 알고리즘 1937번 욕심쟁이 판다
+* 다이나믹 프로그래밍에 재귀를 사용하지 않으면, 시간 초과 발생
+* 재귀 사용함으로써 문제 해결 할 수 있었음
+*/
+
+import java.util.Scanner;
+
+public class Main {
+	static int size;
+	static int[][] forest;
+	static int[][] day;
+	static boolean[][] visit;
+	private static Scanner scan;
+	static int result;
+	static int[] dx = { -1, 0, 1, 0 };
+	static int[] dy = { 0, 1, 0, -1 };
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+
+		size = scan.nextInt(); // 4
+		forest = new int[size][size];
+		day = new int[size][size];
+		visit = new boolean[size][size];
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				int state = scan.nextInt();
+				forest[i][j] = state;
+				day[i][j] = 1;
+				visit[i][j] = false;
+			}
+		}
+
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				day[i][j] = CountDay(i, j);
+			}
+		}
+
+		result = 1;
+		// print
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				if (result < day[i][j]) {
+					result = day[i][j];
+				}
+			}
+		}
+		System.out.println(result);
+
+	}
+
+	static int CountDay(int x, int y) {
+		if (visit[x][y]) {
+			return day[x][y];
+		}
+		for (int k = 0; k < 4; k++) {
+			int xCoord = x + dx[k];
+			int yCoord = y + dy[k];
+
+			if (xCoord > -1 && yCoord > -1 && xCoord < size && yCoord < size) {
+				if (forest[xCoord][yCoord] > forest[x][y]) {
+					day[x][y] = Math.max(day[x][y], CountDay(xCoord, yCoord) + 1);
+				}
+			}
+		}
+		visit[x][y] = true;
+		return day[x][y];
+	}
+}
