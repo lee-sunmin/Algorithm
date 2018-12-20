@@ -1,0 +1,61 @@
+/*
+* 백준 알고리즘 1012번 유기농 배추
+* 재귀
+* 사다리 조작으로 고생한 이후여서 그런지 금방 풀렸음 :)
+*/
+
+import java.util.Scanner;
+
+public class Main {
+	static int xSize;
+	static int ySize;
+	static int lineCnt;
+	static boolean[][] visit;
+	static int dx[] = { -1, 0, 1, 0 };
+	static int dy[] = { 0, 1, 0, -1 };
+	static int loopSize;
+	private static Scanner scan;
+	static int result;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		loopSize = scan.nextInt();
+
+		for (int loop = 0; loop < loopSize; loop++) {
+			xSize = scan.nextInt();
+			ySize = scan.nextInt();
+			lineCnt = scan.nextInt();
+			visit = new boolean[xSize][ySize];
+
+			for (int i = 0; i < lineCnt; i++) {
+				int x = scan.nextInt();
+				int y = scan.nextInt();
+				visit[x][y] = true;
+			}
+			result = 0;
+			for (int x = 0; x < xSize; x++) {
+				for (int y = 0; y < ySize; y++) {
+					if (visit[x][y]) {
+						Check(x, y);
+						result++;
+					}
+				}
+			}
+			System.out.println(result);
+		}
+	}
+
+	static void Check(int x, int y) {
+
+		if (visit[x][y]) {
+			visit[x][y] = false;
+			for (int z = 0; z < 4; z++) {
+				int xCoord = x + dx[z];
+				int yCoord = y + dy[z];
+				if (xCoord >= 0 && xCoord < xSize && yCoord >= 0 && yCoord < ySize) {
+					Check(xCoord, yCoord);
+				}
+			}
+		}
+	}
+}
