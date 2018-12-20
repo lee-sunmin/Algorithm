@@ -1,6 +1,7 @@
 /*
 * 백준 알고리즘 15684 사다리 조작 문제
-* 재귀, 
+* 재귀, 완전탐색
+* 긴 시간동안 고통받았던 문제.. 풀고 나니 재귀 이해력 상승 :)
 */
 
 import java.util.Scanner;
@@ -44,16 +45,14 @@ public class Main {
 			for (int y = 1; y < ySize; y++) {
 				for (int x = xCoord; x <= xSize; x++) {
 					if (ladder[x][y] == 0 && ladder[x][y + 1] == 0) {
-          // 나를 시험에 들게했던 조건문...
-            if(ladder[x][y - 1] != y){
-						  ladder[x][y + 1] = y;
-						  ladder[x][y] = y + 1;
-
-  						CountLine(x, cnt + 1);
-
-	  					ladder[x][y] = 0;
-		  				ladder[x][y + 1] = 0;
-              }
+         					// 나를 시험에 들게했던 조건문...
+           					if(ladder[x][y - 1] != y){
+							ladder[x][y + 1] = y;
+							ladder[x][y] = y + 1;
+							CountLine(x, cnt + 1);
+							ladder[x][y] = 0;
+							ladder[x][y + 1] = 0;
+						}
 					}
 				}
 			}
