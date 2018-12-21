@@ -1,0 +1,72 @@
+/*
+* 백준 알고리즘 10026 적록색약
+* 유기농 배추 문제 풀고 나면 정말 간단하게 풀 수 있음!
+* 간단한 재귀 사용 :)
+*/
+
+import java.util.Scanner;
+
+public class Main {
+	static char[][] map;
+	static char[][] map2;
+	static int dx[] = { -1, 0, 1, 0 };
+	static int dy[] = { 0, 1, 0, -1 };
+	static int size;
+	private static Scanner scan;
+	static int result;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		size = scan.nextInt();
+
+		map = new char[size][size];
+		map2 = new char[size][size];
+
+		for (int x = 0; x < size; x++) {
+			String line = scan.next();
+			for (int y = 0; y < size; y++) {
+				map[x][y] = line.charAt(y);
+				if (map[x][y] == 'R')
+					map2[x][y] = 'G';
+				else
+					map2[x][y] = map[x][y];
+			}
+		}
+
+		result = 0;
+		for (int x = 0; x < size; x++) {
+			for (int y = 0; y < size; y++) {
+				if (map[x][y] != '-') {
+					Check(x, y, map[x][y], map);
+					result++;
+				}
+			}
+		}
+		System.out.print(result + " ");
+
+		result = 0;
+		for (int x = 0; x < size; x++) {
+			for (int y = 0; y < size; y++) {
+				if (map2[x][y] != '-') {
+					Check(x, y, map2[x][y], map2);
+					result++;
+				}
+			}
+		}
+		System.out.print(result);
+
+	}
+
+	static void Check(int x, int y, char color, char[][] Rmap) {
+		if (Rmap[x][y] == color) {
+			Rmap[x][y] = '-';
+			for (int z = 0; z < 4; z++) {
+				int xCoord = x + dx[z];
+				int yCoord = y + dy[z];
+				if (xCoord >= 0 && xCoord < size && yCoord >= 0 && yCoord < size) {
+					Check(xCoord, yCoord, color, Rmap);
+				}
+			}
+		}
+	}
+}
