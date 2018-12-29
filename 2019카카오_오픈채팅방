@@ -1,0 +1,46 @@
+/*
+* 2019 카카오 신입공채 코딩테스트
+* 1번 오픈채팅방
+*/
+
+import java.util.*;
+
+class Solution {
+    public String[] solution(String[] record) {
+        int size = 0;
+        int answerSize = 0;
+        String[] answer = {};
+        Map<String, String> userNm = new HashMap<String,String>();
+                
+        for(int i =0; i < record.length; i++){
+            String state = record[i].split(" ")[0];
+            String id = record[i].split(" ")[1];
+            
+            if(state.equals("Enter")){
+                String nick = record[i].split(" ")[2];
+                userNm.put(id,nick);
+                answerSize++;
+            }else if(state.equals("Change")){
+                String nick = record[i].split(" ")[2];
+                userNm.put(id,nick); 
+            }else{
+                answerSize++;
+            }
+        }
+        answer = new String[answerSize];
+        
+        for(int i = 0; i < record.length; i++){
+            String state = record[i].split(" ")[0];
+            String id = record[i].split(" ")[1];
+            String nick = userNm.get(id);
+            if(state.equals("Enter")){
+                answer[size] = nick+"님이 들어왔습니다.";
+                size++;
+            }else if(state.equals("Leave")){
+                answer[size] = nick+"님이 나갔습니다.";
+                size++;
+            }
+        }
+        return answer;
+    }
+}
