@@ -1,0 +1,46 @@
+/*
+* 2019 카카오 신입 공채 코딩테스트
+* 2번 실패율 . . . 진행 중(미완성)
+*/
+
+class Solution {
+    public int[] solution(int N, int[] stages) {
+        int[] answer = new int[N];
+        double[] state = new double[N+2];
+        double[] failRate = new double[N+2];
+        
+        for(int i = 0; i < stages.length; i++){
+            int a = stages[i];
+            state[a]++;
+        }
+        
+        for(int i = 1; i < state.length-1; i++){
+            int sum = 0;
+            for(int j = i; j < state.length; j++){
+                sum += state[j];
+            }
+            failRate[i] = state[i]/sum;
+        }
+        
+        int count = 0;
+        while(count<N){
+            int idx = 0;
+            double maxVal = -1;
+            
+            for(int i = 1; i < failRate.length-1; i++){
+                if(failRate[i] == -1){
+                    continue;
+                }
+                if(failRate[i] > maxVal){
+                    idx = i;
+                    maxVal = failRate[i];
+                }
+            }
+            failRate[idx]=-1;
+            answer[count]=idx;
+            count++;
+        }
+        
+        return answer;
+    }
+}
