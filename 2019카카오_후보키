@@ -1,0 +1,99 @@
+/*
+* 유일성을 위한 Bit연산 적용 중
+* (해답 x)
+*/
+
+package kakaoTest;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+
+public class Main {
+	static int answer = 0;
+	static int colSize = 0;
+	static String[][] input = { { "100", "ryan", "music", "2" }, { "200", "apeach", "math", "2" },
+			{ "300", "tube", "computer", "3" }, { "400", "con", "computer", "4" }, { "500", "muzi", "music", "3" },
+			{ "600", "apeach", "music", "2" } };
+	// static String[][] input = { { "100" } };
+	static ArrayList<ArrayList<Integer>> superKey;
+
+	public static void main(String[] args) {
+		colSize = input[0].length;
+		ArrayList<Integer> colArr = new ArrayList<Integer>();
+		superKey = new ArrayList<ArrayList<Integer>>();
+		findKey(0, colArr, input);
+
+		System.out.println(answer);
+		System.out.println(superKey);
+
+		checkMinimum();
+	}
+
+	static void findKey(int col, ArrayList<Integer> colArr, String[][] relation) {
+		for (int idx = col; idx <= colSize; idx++) {
+			if (idx < colSize) {
+				colArr.add(idx);
+				if (checkUnique(colArr, relation)) {
+					answer++;
+
+					ArrayList<Integer> temp = new ArrayList<Integer>();
+					temp = (ArrayList<Integer>) colArr.clone();
+					superKey.add(temp);
+				}
+				findKey(idx + 1, colArr, relation);
+				colArr.remove((Integer) idx);
+			}
+		}
+	}
+
+	static void checkMinimum() {
+		// int[] bitArr = new int[superKey.size()];
+		HashSet<Integer> bitArr = new HashSet<>();
+
+		for (int idx = 0; idx < superKey.size(); idx++) {
+			int num = 0;
+			for (int bitidx = 0; bitidx < superKey.get(idx).size(); bitidx++) {
+				num |= (1 << superKey.get(idx).get(bitidx).intValue());
+			}
+			//System.out.println(Integer.toBinaryString(num));
+			bitArr.add(num);
+		}
+
+		for (int idx = 0; idx < bitArr.size(); idx++) {
+			Iterator<Integer> it = bitArr.iterator(); // Iterator(반복자) 생성
+
+			while (it.hasNext()) { // hasNext() : 데이터가 있으면 true 없으면 false
+				System.out.println(it.next()); // next() : 다음 데이터 리턴
+				// 하나도 없다면 리
+			}
+
+			bitArr.remove("three"); // 데이터 제거
+
+		}
+
+	}
+
+	static boolean checkUnique(ArrayList<Integer> colArr, String[][] relation) {
+		ArrayList<String> sumInput = new ArrayList<String>();
+		for (int rowidx = 0; rowidx < relation.length; rowidx++) {
+			String temp = "";
+			for (int idx = 0; idx < colArr.size(); idx++) {
+				temp += relation[rowidx][colArr.get(idx)];
+			}
+			if (sumInput.contains(temp)) {
+				return false;
+			} else {
+				sumInput.add(temp);
+			}
+		}
+		return true;
+	}
+
+	public static void print(double[] temp) {
+		for (int i = 0; i < temp.length; i++) {
+			System.out.print(temp[i] + " ");
+		}
+		System.out.println();
+	}
+}
