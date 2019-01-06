@@ -56,22 +56,15 @@ public class Main {
 			for (int bitidx = 0; bitidx < superKey.get(idx).size(); bitidx++) {
 				num |= (1 << superKey.get(idx).get(bitidx).intValue());
 			}
-			//System.out.println(Integer.toBinaryString(num));
+			// System.out.println(Integer.toBinaryString(num));
 			bitArr.add(num);
 		}
 
-		for (int idx = 0; idx < bitArr.size(); idx++) {
-			Iterator<Integer> it = bitArr.iterator(); // Iterator(반복자) 생성
-
-			while (it.hasNext()) { // hasNext() : 데이터가 있으면 true 없으면 false
-				System.out.println(it.next()); // next() : 다음 데이터 리턴
-				// 하나도 없다면 리
-			}
-
-			bitArr.remove("three"); // 데이터 제거
-
+		Iterator<Integer> it = bitArr.iterator(); // Iterator(반복자) 생성
+		while (it.hasNext()) { // hasNext() : 데이터가 있으면 true 없으면 false
+			System.out.println(it.next());
 		}
-
+		bitArr.remove(1); // 데이터 제거
 	}
 
 	static boolean checkUnique(ArrayList<Integer> colArr, String[][] relation) {
@@ -96,4 +89,5 @@ public class Main {
 		}
 		System.out.println();
 	}
+
 }
