@@ -1,54 +1,46 @@
 /*
-* 유일성을 위한 Bit연산 적용 중
-* (해답 x)
+* 유일성을 위한 Bit연산 적용 완료
+* 처음으로 접한 비트문제
+* 지저분한 코드는 다듬어야 함 :)
 */
-
-package kakaoTest;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
-public class Main {
-	static int answer = 0;
-	static int colSize = 0;
-	static String[][] input = { { "100", "ryan", "music", "2" }, { "200", "apeach", "math", "2" },
-			{ "300", "tube", "computer", "3" }, { "400", "con", "computer", "4" }, { "500", "muzi", "music", "3" },
-			{ "600", "apeach", "music", "2" } };
-	// static String[][] input = { { "100" } };
-	static ArrayList<ArrayList<Integer>> superKey;
+class Solution {
+    int answer = 0;
+    int colSize = 0;
+    ArrayList<ArrayList<Integer>> superKey;
 
-	public static void main(String[] args) {
-		colSize = input[0].length;
+    public int solution(String[][] relation) {
+        colSize = relation[0].length;
 		ArrayList<Integer> colArr = new ArrayList<Integer>();
-		superKey = new ArrayList<ArrayList<Integer>>();
-		findKey(0, colArr, input);
+        superKey = new ArrayList<ArrayList<Integer>>();
 
-		System.out.println(answer);
-		System.out.println(superKey);
-
-		checkMinimum();
-	}
-
-	static void findKey(int col, ArrayList<Integer> colArr, String[][] relation) {
+		findKey(0, colArr,relation,superKey);
+        answer = checkMinimum(superKey);
+        return answer;
+    }
+    
+    	public void findKey(int col, ArrayList<Integer> colArr, String[][] relation, ArrayList<ArrayList<Integer>> superKey) {
+            int colSize = relation[0].length;
 		for (int idx = col; idx <= colSize; idx++) {
 			if (idx < colSize) {
 				colArr.add(idx);
 				if (checkUnique(colArr, relation)) {
-					answer++;
-
 					ArrayList<Integer> temp = new ArrayList<Integer>();
 					temp = (ArrayList<Integer>) colArr.clone();
 					superKey.add(temp);
 				}
-				findKey(idx + 1, colArr, relation);
+				findKey(idx + 1, colArr, relation,superKey);
 				colArr.remove((Integer) idx);
 			}
 		}
 	}
-
-	static void checkMinimum() {
-		// int[] bitArr = new int[superKey.size()];
+    
+    public int checkMinimum(ArrayList<ArrayList<Integer>> superKey) {
+        int result = 0;
 		HashSet<Integer> bitArr = new HashSet<>();
 
 		for (int idx = 0; idx < superKey.size(); idx++) {
@@ -56,18 +48,28 @@ public class Main {
 			for (int bitidx = 0; bitidx < superKey.get(idx).size(); bitidx++) {
 				num |= (1 << superKey.get(idx).get(bitidx).intValue());
 			}
-			// System.out.println(Integer.toBinaryString(num));
 			bitArr.add(num);
 		}
 
-		Iterator<Integer> it = bitArr.iterator(); // Iterator(반복자) 생성
-		while (it.hasNext()) { // hasNext() : 데이터가 있으면 true 없으면 false
-			System.out.println(it.next());
+		Iterator<Integer> it; // Iterator(반복자) 생성
+		int smaller;
+		while (bitArr.size() > 0) {
+			it = bitArr.iterator(); // Iterator(반복자) 생성
+			smaller = it.next();
+			while (it.hasNext()) { // hasNext() : 데이터가 있으면 true 없으면 false
+				int next = it.next();
+				int temp = smaller & next;
+				if (temp == smaller) {
+					it.remove();
+				}
+			}
+			result++;
+			bitArr.remove(smaller);
 		}
-		bitArr.remove(1); // 데이터 제거
+        return result;
 	}
 
-	static boolean checkUnique(ArrayList<Integer> colArr, String[][] relation) {
+	public boolean checkUnique(ArrayList<Integer> colArr,String[][] relation) {
 		ArrayList<String> sumInput = new ArrayList<String>();
 		for (int rowidx = 0; rowidx < relation.length; rowidx++) {
 			String temp = "";
@@ -82,12 +84,4 @@ public class Main {
 		}
 		return true;
 	}
-
-	public static void print(double[] temp) {
-		for (int i = 0; i < temp.length; i++) {
-			System.out.print(temp[i] + " ");
-		}
-		System.out.println();
-	}
-
 }
