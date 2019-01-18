@@ -11,13 +11,13 @@
 		long sum = 0;
 		for (int i = 0; i < food_times.length; i++) {
 			map.put(i, food_times[i]);
-			sum = sum + food_times[i];
+			sum = sum + (long) food_times[i];
 		}
 
 		if (sum <= k)
 			return -1;
 
-		Iterator<Integer> it = sortByValue(map).iterator();
+		Iterator<Integer> it = sortByValue(map).iterator();// value값 오름차순
 		int mapSize = map.size();
 		long a = 0;
 		long a2 = 0;
@@ -28,25 +28,37 @@
 				map.remove(temp);
 				a2 = a;
 			} else {
-				k = k - a2;
 				break;
 			}
-//			System.out.println(temp + " = " + map.get(temp));
 		}
+		k = k - a2;
 
 		mapSize = map.size();
 
-		Iterator<Integer> iteratorKey = map.keySet().iterator(); // value값 오름차순
+		Iterator<Integer> iteratorKey = map.keySet().iterator(); // key값 오름차
+		HashMap<Integer, Integer> map2 = new HashMap<Integer, Integer>();
+
 		ArrayList<Integer> keyList = new ArrayList<Integer>();
 		while (iteratorKey.hasNext()) {
-			Integer value = iteratorKey.next();
-			keyList.add(value);
+			int key = iteratorKey.next();
+			map2.put(key, map.get(key));
+			keyList.add(map.get(key));
 		}
 
 		if (keyList.size() == 0) {
 			return -1;
-		} 
-			return keyList.get((int) k % mapSize) + 1;
+		}
+
+		Iterator<Integer> iterKey = map2.keySet().iterator();
+		int res = 0;
+		for(int i = 0; i <= k%mapSize; i++) {
+			int key = iterKey.next();
+			res = key;
+		}
+		
+		return res+1;	
+		
+		//return (int) ((map2.keySet().toArray())[(int) (k % (long) mapSize)]) + 1;
 	}
 	
 	public static List<Integer> sortByValue(final Map<Integer, Integer> map) {
