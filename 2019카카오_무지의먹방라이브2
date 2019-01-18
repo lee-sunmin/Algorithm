@@ -61,16 +61,25 @@
 		//return (int) ((map2.keySet().toArray())[(int) (k % (long) mapSize)]) + 1;
 	}
 	
-	public static List<Integer> sortByValue(final Map<Integer, Integer> map) {
+	public static List<Integer> sortByValue(Map<Integer, Integer> map) {
+
 		List<Integer> list = new ArrayList<Integer>();
+
 		list.addAll(map.keySet());
+
 		Collections.sort(list, new Comparator<Object>() {
+
+			@SuppressWarnings("unchecked")
+
 			public int compare(Object o1, Object o2) {
+
 				Object v1 = map.get(o1);
 				Object v2 = map.get(o2);
-				return ((Comparable) v2).compareTo(v1);
+
+				return ((Comparable<Object>) v1).compareTo(v2);
 			}
 		});
-		Collections.reverse(list); // 주석시 오름차순
+
+		//Collections.reverse(list); // 주석시 오름차순
 		return list;
 	}
