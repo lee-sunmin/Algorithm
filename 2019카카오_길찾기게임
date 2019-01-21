@@ -1,0 +1,85 @@
+2019 카카오 길찾기게임
+binary tree , preOrder, postOrder
+Point : Comparator (*)
+
+================================================
+
+import java.util.*;
+
+class Solution {
+    int idx;
+public static int[][] solution(int[][] nodeinfo) {
+		int[][] answer = new int[2][nodeinfo.length];
+
+		Node[] nodearr = new Node[nodeinfo.length];
+		for (int idx = 0; idx < nodeinfo.length; idx++) {
+			nodearr[idx] = new Node(idx + 1, nodeinfo[idx][0], nodeinfo[idx][1]);
+		}
+
+		Arrays.sort(nodearr, new Comparator<Node>() {
+			public int compare(Node node1, Node node2) {
+				int compareTo = ((Comparable) node2.y).compareTo(node1.y);
+				return compareTo;
+			}
+		});
+
+		Node start = nodearr[0];
+		for (int i = 1; i < nodearr.length; i++) {
+			Node temp = start;
+			Node node = nodearr[i];
+			while (temp.y >= node.y) {
+				if (temp.x > node.x) {
+					if (temp.left == null)
+						break;
+					temp = temp.left;
+				} else {
+					if (temp.right == null)
+						break;
+					temp = temp.right;
+				}
+			}
+			if (node.x < temp.x)
+				temp.left = node;
+			else
+				temp.right = node;
+		}
+
+		preOrder(start, answer);
+		idx = 0;
+		postOrder(start, answer);
+
+		return answer;
+	}
+
+	public static void preOrder(Node head, int[][] answer) {
+		answer[0][idx] = head.idx;
+		idx++;
+		if (head.left != null)
+			preOrder(head.left, answer);
+		if (head.right != null)
+			preOrder(head.right, answer);
+	}
+
+	public static void postOrder(Node head, int[][] answer) {
+		if (head.left != null)
+			postOrder(head.left, answer);
+		if (head.right != null)
+			postOrder(head.right, answer);
+		answer[1][idx] = head.idx;
+		idx++;
+	}
+}
+
+class Node {
+    int idx;
+    int x;
+    int y;
+    Node left;
+    Node right;
+    
+    Node(int idx, int x, int y){
+        this.idx = idx;
+        this.x = x;
+        this.y = y;
+    }
+}
