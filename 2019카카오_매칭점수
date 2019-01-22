@@ -1,0 +1,83 @@
+
+2019 kakao coding test 매칭점수 
+
+main : line.split("\\P{Alpha}+") // 영문자 제외한 모든 문자로 split
+마지막 TC8 실패 이유 : double 대신 float를 썼기 때문.
+
+========================================
+
+import java.util.*;
+
+class Solution {
+    public static int solution(String word, String[] pages) {
+        word = word.toLowerCase().trim();
+        int answer = 0;
+        ArrayList<Link> link = new ArrayList<Link>();
+
+        String[] xmlns = new String[pages.length];
+        double[] wordCnt = new double[pages.length];
+        double[] lineScore = new double[pages.length];
+        double[] lineCnt = new double[pages.length];
+        for (int i = 0; i < pages.length; i++) {
+            String page = pages[i];
+            String[] array = page.split("\n|</a>|<a");
+            for (int j = 0; j < array.length; j++) {
+                String line = array[j].trim();
+                System.out.println(line);
+                if (line.startsWith("<meta property")) {
+                    String target = "https://";
+                    int target_num = line.indexOf(target);
+                    xmlns[i] = line.substring(target_num, (line.substring(target_num).indexOf("\"") + target_num));
+                } else if (line.startsWith("href=")) {
+                    lineCnt[i]++;
+                    String target = "https://";
+                    int target_num = line.indexOf(target);
+                    String destAddr = line.substring(target_num,
+                            (line.substring(target_num).indexOf("\"") + target_num));
+                    link.add(new Link(i, destAddr));
+                } else if (!line.startsWith("<") && !line.equals("")) {
+                    String[] message = line.split("\\P{Alpha}+");
+                    for (int midx = 0; midx < message.length; midx++) {
+                        if (message[midx].toLowerCase().equals(word))
+                            wordCnt[i]++;
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < link.size(); i++) {
+            Link l = link.get(i);
+
+            if (getDestIdx(l.dest, xmlns) >= 0)
+                lineScore[getDestIdx(l.dest, xmlns)] += (wordCnt[l.start] / lineCnt[l.start]);
+        }
+
+        double value = -1;
+        for (int i = 0; i < pages.length; i++) {
+            double total = lineScore[i] + wordCnt[i];
+            if (total > value) {
+                answer = i;
+                value = total;
+            }
+        }
+        return answer;
+    }
+
+    static int getDestIdx(String dest, String[] xmlns) {
+        for (int i = 0; i < xmlns.length; i++) {
+            if (xmlns[i].equals(dest))
+                return i;
+        }
+        return -1;
+    }
+}
+
+class Link {
+    int start;
+    String dest;
+
+    Link(int start, String dest) {
+        this.start = start;
+        this.dest = dest;
+    }
+}
