@@ -1,0 +1,63 @@
+다이나믹 프로그래밍 첫 도전
+
+dp[1]일 때, 1이 끝난 후의 value값을 쓰는 것이 아니다.
+1에 진입했을 때의 value값을 쓰는것이 포인트! (1 이전까지의 값)
+
+따라서 최종값은 dp[N]이 아닌 dp[N+1]에 저장되기 때문에 배열은 +1을 했다.
+
+res라는 값을 사용하는데, 이 값은 해당 day에 진입했을 때 얻을 수 있는 최대 값이라 생각하면 된다.
+
+따라서 마지막에 N+1 위치에 있는 값과도 (N번째 결과를 가지는 value값 저장)
+res를 비교함으로써 최대값을 res에 저장한다.
+
+===================================
+
+import java.util.*;
+
+class Main {
+	private static Scanner scan;
+	static Job[] jobs;
+	static int[] dp;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		int N = scan.nextInt();
+		jobs = new Job[N + 1];
+		dp = new int[N + 2];
+
+		int res = 0;
+
+		for (int i = 1; i <= N; i++) {
+			int time = scan.nextInt();
+			int point = scan.nextInt();
+			jobs[i] = new Job(time, point);
+		}
+
+		for (int j = 1; j <= N; j++) {
+			if (res < dp[j])
+				res = dp[j];
+			int time = jobs[j].time;
+			int point = jobs[j].point;
+
+			if (time + j <= N + 1) {
+				if (point + res > dp[j + time]) {
+					dp[j + time] = point + res;
+				}
+			}
+		}
+		if (res < dp[N + 1])
+			res = dp[N + 1];
+
+		System.out.println(res);
+	}
+
+	static class Job {
+		int time;
+		int point;
+
+		Job(int time, int point) {
+			this.time = time;
+			this.point = point;
+		}
+	}
+}
