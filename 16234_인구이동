@@ -1,0 +1,124 @@
+bfs-queue
+
+아기상어 문제 풀고 나니까 쉽게 풀렸음 :)
+
+================================
+
+import java.util.*;
+
+public class Main {
+	static int result = 0;
+	static int[][] map;
+	static int[][] group;
+	static boolean[][] visit;
+	static ArrayList<groupNode> gnode;
+	static int N;
+	static int L;
+	static int R;
+	static int[] dx = { 1, 0, -1, 0 };
+	static int[] dy = { 0, -1, 0, 1 };
+	static Queue<Node> queue;
+	static int gidx;
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		gnode = new ArrayList<groupNode>();
+		queue = new LinkedList<Node>();
+		N = scan.nextInt();
+		L = scan.nextInt();
+		R = scan.nextInt();
+		map = new int[N][N];
+		group = new int[N][N];
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				map[i][j] = scan.nextInt();
+			}
+		}
+
+		queue.add(new Node(0, 0));
+		while (makeGroup()) {
+			result++;
+			divide();
+			group = new int[N][N];
+			gnode = new ArrayList<groupNode>();
+			gidx = 0;
+		}
+		System.out.println(result);
+	}
+
+	public static void divide() {
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				if (group[i][j] != 0) {
+					map[i][j] = gnode.get(group[i][j] - 1).total / gnode.get(group[i][j] - 1).cnt;
+				}
+			}
+		}
+	}
+
+	public static boolean makeGroup() {
+		boolean state = false;
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				queue = new LinkedList<Node>();
+				queue.add(new Node(i, j));
+				if (group[i][j] != 0)
+					continue;
+				while (!queue.isEmpty()) {
+					Node temp = queue.poll();
+
+					for (int k = 0; k < 4; k++) {
+						int x = temp.x + dx[k];
+						int y = temp.y + dy[k];
+
+						if (x >= 0 && y >= 0 && x < N && y < N) {
+							if (group[x][y] == 0) {
+								int value = Math.abs(map[temp.x][temp.y] - map[x][y]);
+								if (value >= L && value <= R) {
+									if (group[temp.x][temp.y] == 0) {
+										state = true;
+										gidx++;
+										gnode.add(new groupNode(gidx, map[temp.x][temp.y], 1));
+										group[temp.x][temp.y] = gidx;
+									}
+									group[x][y] = gidx;
+									gnode.get(gidx - 1).addValue(map[x][y]);
+									queue.add(new Node(x, y));
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return state;
+	}
+
+}
+
+class Node {
+	int x;
+	int y;
+
+	Node(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+}
+
+class groupNode {
+	int idx;
+	int total;
+	int cnt;
+
+	groupNode(int idx, int total, int cnt) {
+		this.idx = idx;
+		this.total = total;
+		this.cnt = cnt;
+	}
+
+	public void addValue(int total) {
+		this.total += total;
+		this.cnt++;
+	}
+}
