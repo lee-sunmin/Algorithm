@@ -1,0 +1,129 @@
+bfs - queue
+
+visit 행렬 사용 안했더니, 메모리 초과 났었음.
+visit 배열 꼭 잘 사용해주기 :D
+
+이 문제도 아기 상어 문제 이후에 푸니까 빨리 풀 수 있었음~
+
+============================================
+
+import java.util.*;
+
+public class Main {
+	static Scanner scan;
+	static int C;
+	static int R;
+	static char[][] map;
+	static boolean[][] visit;
+	static int[] dx = { 1, 0, -1, 0 };
+	static int[] dy = { 0, -1, 0, 1 };
+	static Node gnode;
+	static Queue<Node> queue;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		R = scan.nextInt();
+		C = scan.nextInt();
+
+		map = new char[R][C];
+		visit = new boolean[R][C];
+		queue = new LinkedList<Node>();
+		scan.nextLine();
+		for (int i = 0; i < R; i++) {
+			String line = scan.nextLine();
+			for (int k = 0; k < line.length(); k++) {
+				map[i][k] = line.charAt(k);
+				if (map[i][k] == 'S') {
+					gnode = new Node(i, k, 0);
+				}
+			}
+		}
+		if (run()) {
+			System.out.println(gnode.cnt);
+		} else {
+			System.out.println("KAKTUS");
+		}
+	}
+
+	public static boolean run() {
+		queue.add(new Node(gnode.x, gnode.y, 0, map));
+
+		while (!queue.isEmpty()) {
+			Node temp = queue.poll();
+
+			for (int k = 0; k < 4; k++) {
+				int x = temp.x + dx[k];
+				int y = temp.y + dy[k];
+
+				if (x >= 0 && y >= 0 && x < R && y < C && !visit[x][y]) {
+					if (temp.map[x][y] == '.') {
+						char[][] cmap = new char[R][C];
+						for (int i = 0; i < R; i++) {
+							for (int j = 0; j < C; j++) {
+								cmap[i][j] = temp.map[i][j];
+							}
+						}
+
+						cmap = runWater(cmap);
+						if (cmap[x][y] == '*') {
+
+						} else {
+							// if remove this line, over the memory space
+							visit[x][y] = true;
+							cmap[x][y] = 'S';
+							cmap[gnode.x][gnode.y] = '.';
+							queue.add(new Node(x, y, temp.cnt + 1, cmap));
+						}
+					} else if (temp.map[x][y] == 'D') {
+						gnode = new Node(x, y, temp.cnt + 1, temp.map);
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public static char[][] runWater(char[][] map) {
+		boolean[][] visit = new boolean[R][C];
+
+		for (int i = 0; i < R; i++) {
+			for (int j = 0; j < C; j++) {
+				if (map[i][j] == '*' && !visit[i][j]) {
+					visit[i][j] = true;
+					for (int k = 0; k < 4; k++) {
+						int x = i + dx[k];
+						int y = j + dy[k];
+						if (x >= 0 && y >= 0 && x < R && y < C && !visit[x][y]) {
+							if (map[x][y] == '.') {
+								map[x][y] = '*';
+								visit[x][y] = true;
+							}
+						}
+					}
+				}
+			}
+		}
+		return map;
+	}
+}
+
+class Node {
+	int x;
+	int y;
+	int cnt;
+	char[][] map;
+
+	Node(int x, int y, int cnt) {
+		this.x = x;
+		this.y = y;
+		this.cnt = cnt;
+	}
+
+	Node(int x, int y, int cnt, char[][] map) {
+		this.x = x;
+		this.y = y;
+		this.cnt = cnt;
+		this.map = map;
+	}
+}
