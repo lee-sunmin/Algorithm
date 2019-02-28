@@ -1,0 +1,90 @@
+중복없는 조합
+
+==================================
+
+import java.util.*;
+
+public class Main {
+	static Scanner scan;
+	static int N;
+	static int M;
+	static int result;
+	static ArrayList<Node> homeArr;
+	static ArrayList<Node> chickenArr;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		N = scan.nextInt();
+		M = scan.nextInt();
+		homeArr = new ArrayList<Node>();
+		chickenArr = new ArrayList<Node>();
+		result = Integer.MAX_VALUE;
+
+		for (int i = 1; i <= N; i++) {
+			for (int j = 1; j <= N; j++) {
+				int a = scan.nextInt();
+				if (a == 1) {
+					homeArr.add(new Node(i, j));
+				} else if (a == 2) {
+					chickenArr.add(new Node(i, j));
+				}
+			}
+		}
+
+		if (chickenArr.size() > M) {
+			getChicken(0, 0, new int[M], M);
+		} else {
+			int[] arr = new int[M];
+			for (int i = 0; i < arr.length; i++)
+				arr[i] = i;
+			result = check(arr);
+		}
+
+		System.out.println(result);
+	}
+
+	public static void getChicken(int idx, int num, int[] arr, int cnt) {
+		if (cnt == 0) {
+			int sum = check(arr);
+			if (sum < result)
+				result = sum;
+		} else if (idx < M && num < chickenArr.size()) {
+			arr[idx] = num;
+			getChicken(idx + 1, num + 1, arr, cnt - 1);
+			getChicken(idx, num + 1, arr, cnt);
+		}
+	}
+
+	public static int check(int[] arr) {
+		int sum = 0;
+		int[] marr = new int[homeArr.size()];
+		for (int i = 0; i < arr.length; i++) {
+			Node chicken = chickenArr.get(arr[i]);
+
+			for (int j = 0; j < homeArr.size(); j++) {
+				Node home = homeArr.get(j);
+				int value = Math.abs(home.x - chicken.x) + Math.abs(home.y - chicken.y);
+
+				if (marr[j] != 0 && marr[j] > value)
+					marr[j] = value;
+				else if (marr[j] == 0)
+					marr[j] = value;
+			}
+		}
+
+		for (int i = 0; i < homeArr.size(); i++) {
+			sum = sum + marr[i];
+		}
+		return sum;
+	}
+}
+
+class Node {
+	int x;
+	int y;
+
+	Node(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+}
