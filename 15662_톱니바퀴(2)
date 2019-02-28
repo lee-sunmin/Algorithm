@@ -1,0 +1,114 @@
+시뮬레이션
+
+=========================
+
+import java.util.*;
+
+public class Main {
+	static Scanner scan;
+	static int T;
+	static int K;
+	static int result;
+	static ArrayList<Object>[] array;
+	static Node[] jobs;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		T = scan.nextInt();
+		array = new ArrayList[T + 1];
+		scan.nextLine();
+
+		for (int i = 1; i <= T; i++) {
+			String line = scan.nextLine();
+			array[i] = new ArrayList<Object>();
+			for (int j = 0; j < line.length(); j++) {
+				array[i].add(line.charAt(j));
+			}
+		}
+
+		K = scan.nextInt();
+		jobs = new Node[K];
+
+		for (int i = 0; i < K; i++) {
+			int idx = scan.nextInt();
+			int loc = scan.nextInt();
+			jobs[i] = new Node(idx, loc);
+		}
+
+		run();
+		for (int i = 1; i <= T; i++) {
+			if ((char) array[i].get(0) == '1') {
+				result++;
+			}
+		}
+		System.out.println(result);
+	}
+
+	public static void run() {
+		for (int i = 0; i < K; i++) {
+			Node job = jobs[i];
+			ArrayList<Node> moves = new ArrayList<Node>();
+
+			int left = job.idx - 1;
+			int right = job.idx + 1;
+
+			Node leftTemp = new Node(job.idx, job.loc);
+			Node rightTemp = new Node(job.idx, job.loc);
+
+			while (left >= 1) {
+				if (array[left].get(2) != array[leftTemp.idx].get(6)) {
+					if (leftTemp.loc == 1) {
+						moves.add(new Node(left, -1));
+						leftTemp = new Node(left, -1);
+					} else {
+						moves.add(new Node(left, 1));
+						leftTemp = new Node(left, 1);
+					}
+					left--;
+				} else
+					break;
+			}
+
+			while (right <= T) {
+				if (array[right].get(6) != array[rightTemp.idx].get(2)) {
+					if (rightTemp.loc == 1) {
+						moves.add(new Node(right, -1));
+						rightTemp = new Node(right, -1);
+					} else {
+						moves.add(new Node(right, 1));
+						rightTemp = new Node(right, 1);
+					}
+					right++;
+				} else
+					break;
+			}
+
+			turn(job);
+
+			for (int k = 0; k < moves.size(); k++) {
+				turn(moves.get(k));
+			}
+		}
+
+	}
+
+	static void turn(Node node) {
+		if (node.loc == 1) {
+			Object t = array[node.idx].remove(7);
+			array[node.idx].add(0, t);
+		} else {
+			Object t = array[node.idx].remove(0);
+			array[node.idx].add(t);
+		}
+	}
+}
+
+class Node {
+	int idx;
+	int loc;
+
+	Node(int idx, int loc) {
+		this.idx = idx;
+		this.loc = loc;
+	}
+}
