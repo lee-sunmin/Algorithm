@@ -1,0 +1,54 @@
+조합 알고리즘
+
+===========================
+
+import java.util.*;
+
+class Main {
+	private static Scanner scan;
+	static int N;
+	static int M;
+	static boolean[][] map;
+	static int result;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		N = scan.nextInt();
+		M = scan.nextInt();
+		map = new boolean[N + 1][N + 1];
+		result = 0;
+		for (int j = 0; j < M; j++) {
+			int x = scan.nextInt();
+			int y = scan.nextInt();
+			map[x][y] = true;
+			map[y][x] = true;
+		}
+
+		int[] ice = new int[3];
+		run(1, 0, ice, 3);
+
+		System.out.println(result);
+	}
+
+	static void run(int n, int idx, int[] ice, int cnt) {
+		if (cnt == 0) {
+			if (check(ice))
+				result++;
+		} else if (idx >= ice.length) {
+
+		} else if (n <= N) {
+			ice[idx] = n;
+      // 조합 : 들어갔을 때, 안들어갔을 때 나누기
+			run(n + 1, idx + 1, ice, cnt - 1);
+			run(n + 1, idx, ice, cnt);
+		}
+	}
+
+	static boolean check(int[] ice) {
+    // not my idea T_T
+		if (map[ice[0]][ice[1]] || map[ice[1]][ice[2]] || map[ice[0]][ice[2]]) {
+			return false;
+		}
+		return true;
+	}
+}
