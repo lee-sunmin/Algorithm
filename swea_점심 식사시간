@@ -1,0 +1,188 @@
+복잡하고 어려웠다
+DFS 조합 사용
+
+계단을 모두 내려온 사람 제거
+새로운 사람들 넣음
+계단에 있는사람 1씩 감소
+
+위와 같이 수정했더니 통과
+
+===================
+
+import java.util.*;
+
+public class Main {
+	static Scanner scan;
+	static int T;
+	static int N;
+
+	static int result;
+	static Node A;
+	static Node B;
+	static ArrayList<Node> waitA;
+	static ArrayList<Node> waitB;
+	static ArrayList<Node> runA;
+	static ArrayList<Node> runB;
+
+	static ArrayList<Node> people;
+	static int[][] map;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		T = scan.nextInt();
+
+		for (int t = 0; t < T; t++) {
+			N = scan.nextInt();
+
+			waitA = new ArrayList<Node>();
+			waitB = new ArrayList<Node>();
+			runA = new ArrayList<Node>();
+			runB = new ArrayList<Node>();
+			people = new ArrayList<Node>();
+			map = new int[N + 1][N + 1];
+			A = null;
+			B = null;
+
+			result = Integer.MAX_VALUE;
+
+			for (int i = 1; i <= N; i++) {
+				for (int j = 1; j <= N; j++) {
+					map[i][j] = scan.nextInt();
+
+					if (map[i][j] > 1) {
+						if (A == null) {
+							A = new Node(i, j, map[i][j]);
+						} else {
+							B = new Node(i, j, map[i][j]);
+						}
+					} else if (map[i][j] == 1) {
+						people.add(new Node(i, j));
+					}
+				}
+			}
+
+			for (int i = 1; i <= people.size(); i++) {
+				dfs(0, new int[10], i);
+			}
+
+			System.out.println("#" + (t + 1) + " " + (result));
+		}
+	}
+
+	static void dfs(int idx, int[] arr, int range) {
+		if (range <= 0) {
+			int time = run(arr);
+			if (time < result) {
+				result = time;
+			}
+		} else if (idx <= people.size()) {
+			arr[idx] = 1;
+			dfs(idx + 1, arr, range - 1);
+			arr[idx] = 0;
+			dfs(idx + 1, arr, range);
+		}
+	}
+
+	static int run(int[] arr) {
+		int time = 0;
+
+		for (int i = 0; i < people.size(); i++) {
+			Node temp = people.get(i);
+			if (arr[i] != 0) {
+				waitA.add(new Node(temp.x, temp.y, Math.abs(temp.x - A.x) + Math.abs(temp.y - A.y)));
+			} else {
+				waitB.add(new Node(temp.x, temp.y, Math.abs(temp.x - B.x) + Math.abs(temp.y - B.y)));
+			}
+		}
+
+		while (waitA.size() != 0 || waitB.size() != 0 || runA.size() != 0 || runB.size() != 0) {
+			time++;
+
+			Iterator<Node> iter = runA.iterator();
+			while (iter.hasNext()) {
+				Node temp = iter.next();
+				if (temp.length <= 0) {
+					iter.remove();
+				}
+			}
+
+			iter = runB.iterator();
+			while (iter.hasNext()) {
+				Node temp = iter.next();
+				if (temp.length <= 0) {
+					iter.remove();
+				}
+			}
+
+			iter = waitA.iterator();
+			while (iter.hasNext()) {
+				Node temp = iter.next();
+				temp.length--;
+
+				if (temp.length <= 0) {
+					if (!temp.ready) {
+						temp.ready = true;
+					} else if (runA.size() < 3) {
+						iter.remove();
+						runA.add(new Node(temp.x, temp.y, A.length));
+
+					}
+				}
+			}
+
+			iter = waitB.iterator();
+			while (iter.hasNext()) {
+				Node temp = iter.next();
+				temp.length--;
+
+				if (temp.length <= 0) {
+					if (!temp.ready) {
+						temp.ready = true;
+					} else if (runB.size() < 3) {
+						iter.remove();
+						runB.add(new Node(temp.x, temp.y, B.length));
+					}
+				}
+			}
+
+			iter = runA.iterator();
+			while (iter.hasNext()) {
+				Node temp = iter.next();
+				if (temp.length <= 0) {
+					// iter.remove();
+				} else {
+					temp.length--;
+				}
+			}
+
+			iter = runB.iterator();
+			while (iter.hasNext()) {
+				Node temp = iter.next();
+				if (temp.length <= 0) {
+					// iter.remove();
+				} else {
+					temp.length--;
+				}
+			}
+		}
+		return time;
+	}
+}
+
+class Node {
+	int x;
+	int y;
+	int length;
+	boolean ready = false;
+
+	Node(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	Node(int x, int y, int length) {
+		this.x = x;
+		this.y = y;
+		this.length = length;
+	}
+}
