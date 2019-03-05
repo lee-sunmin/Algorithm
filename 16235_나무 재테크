@@ -1,0 +1,154 @@
+
+import java.util.*;
+
+public class Main {
+	static Scanner scan;
+	static int N;
+	static int M;
+	static int K;
+	static int result;
+	static int[] dx = { -1, -1, -1, 0, 0, 1, 1, 1 };
+	static int[] dy = { -1, 0, 1, -1, 1, -1, 0, 1 };
+	static ArrayList<Node>[][] tree;
+	static int[][] deathTree;
+	static int[][] map;
+	static int[][] defmap;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		N = scan.nextInt();
+		M = scan.nextInt();
+		K = scan.nextInt();
+		tree = new ArrayList[N + 1][N + 1];
+		deathTree = new int[N + 1][N + 1];
+		map = new int[N + 1][N + 1];
+		defmap = new int[N + 1][N + 1];
+
+		for (int i = 1; i <= N; i++) {
+			for (int j = 1; j <= N; j++) {
+				defmap[i][j] = scan.nextInt();
+				map[i][j] = 5;
+				tree[i][j] = new ArrayList<Node>();
+			}
+		}
+
+		for (int i = 0; i < M; i++) {
+			int x = scan.nextInt();
+			int y = scan.nextInt();
+			int z = scan.nextInt();
+			int idx = 0;
+			// dirty..
+			if (tree[x][y].size() == 0) {
+				tree[x][y].add(new Node(z));
+			} else {
+				while (idx < tree[x][y].size()) {
+					if (tree[x][y].get(idx).age > z) {
+						idx++;
+						break;
+					}
+					idx++;
+				}
+				tree[x][y].add(idx - 1, new Node(z));
+			}
+			result++;
+		}
+
+		// start
+		for (int i = 1; i <= K; i++) {
+			if (result == 0) {
+				System.out.println(result);
+				return;
+			}
+
+			// spring
+			for (int x = 1; x <= N; x++) {
+				for (int y = 1; y <= N; y++) {
+					if (map[x][y] <= 0 || tree[x][y].size() == 0) {
+						continue;
+					}
+
+					for (int m = 0; m < tree[x][y].size(); m++) {
+						Node min = tree[x][y].get(m);
+						if (min.age > map[x][y]) {
+							for (int j = 0; j < tree[x][y].size(); j++) {
+								if (tree[x][y].get(j).year != i) {
+									tree[x][y].get(j).death = true;
+									result--;
+									deathTree[x][y]++;
+								}
+							}
+							break;
+						} else {
+							map[x][y] = map[x][y] - min.age;
+							min.age++;
+							min.year = i;
+						}
+					}
+				}
+			}
+
+			// summer
+			for (int x = 1; x <= N; x++) {
+				for (int y = 1; y <= N; y++) {
+					if (tree[x][y].size() == 0 || deathTree[x][y] == 0) {
+						continue;
+					}
+
+					int sum = 0;
+					Iterator<Node> iter = tree[x][y].iterator();
+					while (iter.hasNext()) {
+						Node temp = iter.next();
+						if (temp.death) {
+							sum += (temp.age / 2);
+							iter.remove();
+						}
+					}
+					deathTree[x][y] = 0;
+					map[x][y] += sum;
+				}
+			}
+
+			// fall
+			for (int x = 1; x <= N; x++) {
+				for (int y = 1; y <= N; y++) {
+					if (tree[x][y].size() == 0) {
+						continue;
+					}
+
+					Iterator<Node> iter = tree[x][y].iterator();
+					while (iter.hasNext()) {
+						Node temp = iter.next();
+						if (temp.age % 5 == 0) {
+							for (int k = 0; k < 8; k++) {
+								int tx = x + dx[k];
+								int ty = y + dy[k];
+								if (tx >= 1 && ty >= 1 && tx <= N && ty <= N) {
+									tree[tx][ty].add(0, new Node(1));
+									result++;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			// winter
+			for (int x = 1; x <= N; x++) {
+				for (int y = 1; y <= N; y++) {
+					map[x][y] += defmap[x][y];
+				}
+			}
+		}
+		System.out.println(result);
+	}
+}
+
+class Node {
+	int age;
+	boolean death;
+	int year;
+
+	Node(int age) {
+		this.age = age;
+	}
+}
