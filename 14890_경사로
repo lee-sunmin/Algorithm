@@ -1,0 +1,137 @@
+복잡한 시뮬레이션
+
+===============================
+
+import java.util.*;
+
+public class Main {
+	static Scanner scan;
+	static int N;
+	static int L;
+	static boolean[][] visit;
+	static int[][] map;
+	static int result;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		N = scan.nextInt();
+		L = scan.nextInt();
+		map = new int[N][N];
+		visit = new boolean[N][N];
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				map[i][j] = scan.nextInt();
+			}
+		}
+
+		for (int i = 0; i < N; i++) {
+			if (run(i, 0)) {
+				result++;
+			}
+		}
+
+		visit = new boolean[N][N];
+
+		for (int i = 0; i < N; i++) {
+			if (run(i, 1)) {
+				result++;
+			}
+		}
+
+		System.out.println(result);
+
+	}
+
+	static boolean run(int l, int k) {
+		if (k == 0) { // 가로.
+			Node a = new Node(map[l][0]);
+			for (int i = 1; i < N; i++) {
+				Node b = new Node(map[l][i]);
+				if (Math.abs(a.value - b.value) > 1) {
+					return false;
+				} else if (Math.abs(a.value - b.value) == 1) {
+					if (b.value > a.value) {
+						if (a.cnt >= L) {
+							for (int idx = L; idx >= 0; idx--) {
+								if (visit[l][i - idx]) {
+									return false;
+								}
+							}
+							a = b;
+							continue;
+						} else {
+							return false;
+						}
+					} else {
+						visit[l][i] = true;
+						for (int idx = 1; idx <= L - 1; idx++) {
+							i++;
+							if (i >= N) {
+								return false;
+							}
+							if (map[l][i] == b.value && !visit[l][i]) {
+								visit[l][i] = true;
+							} else {
+								return false;
+							}
+						}
+						a = b;
+					}
+				} else if (a.value == b.value) {
+					a.cnt++;
+				}
+			}
+		} else { // 세로.
+			Node a = new Node(map[0][l]);
+			for (int i = 1; i < N; i++) {
+				Node b = new Node(map[i][l]);
+				if (Math.abs(a.value - b.value) > 1) {
+					return false;
+				} else if (Math.abs(a.value - b.value) == 1) {
+					if (b.value > a.value) {
+						if (a.cnt >= L) {
+							for (int idx = L; idx >= 0; idx--) {
+								if (visit[i - idx][l]) {
+									return false;
+								}
+							}
+							a = b;
+							continue;
+						} else {
+							return false;
+						}
+					} else {
+						visit[i][l] = true;
+						for (int idx = 1; idx <= L - 1; idx++) {
+							i++;
+							if (i >= N) {
+								return false;
+							}
+							if (map[i][l] == b.value && !visit[i][l]) {
+								visit[i][l] = true;
+							} else {
+								return false;
+							}
+						}
+						a = b;
+					}
+				} else if (a.value == b.value) {
+					a.cnt++;
+				}
+			}
+		}
+
+		return true;
+	}
+}
+
+class Node {
+	int value;
+	int cnt;
+
+	Node(int value) {
+		this.value = value;
+		this.cnt = 1;
+	}
+}
