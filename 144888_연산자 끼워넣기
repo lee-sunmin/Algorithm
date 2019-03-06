@@ -1,0 +1,94 @@
+dfs 백트래킹
+순열
+
+
+===========================
+
+import java.util.*;
+
+class Main {
+	private static Scanner scan;
+	static int N;
+	static int[] array;
+	static int[] num;
+	static int max;
+	static int min;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		N = scan.nextInt();
+		num = new int[N];
+		array = new int[N - 1];
+		max = Integer.MIN_VALUE;
+		min = Integer.MAX_VALUE;
+
+		for (int i = 0; i < N; i++) {
+			num[i] = scan.nextInt();
+		}
+		int cnt = 0;
+		for (int i = 0; i < 4; i++) {
+			int n = scan.nextInt();
+
+			for (; n > 0; n--) {
+				array[cnt] = i + 1;
+				cnt++;
+			}
+		}
+
+		dfs(0, new int[N - 1], new boolean[N - 1]);
+
+		System.out.println(max);
+		System.out.println(min);
+	}
+
+	public static void dfs(int n, int[] arr, boolean[] visit) {
+		if (n == N - 1) {
+			print(arr);
+			// print
+			int a = solve(arr);
+			if (a > max) {
+				max = a;
+			}
+
+			if (a < min) {
+				min = a;
+			}
+		} else {
+			for (int i = 0; i < N - 1; i++) {
+				if (!visit[i]) {
+					visit[i] = true;
+					arr[n] = i;
+					dfs(n + 1, arr, visit);
+					visit[i] = false;
+				}
+			}
+		}
+	}
+
+	public static int solve(int[] arr) {
+		int sum = num[0];
+		int i = 1;
+		for (int j = 0; j < N - 1; j++) {
+			int a = num[i];
+			int b = array[arr[j]];
+			i++;
+			if (b == 1) {
+				sum = sum + a;
+			} else if (b == 2) {
+				sum = sum - a;
+			} else if (b == 3) {
+				sum = sum * a;
+			} else {
+				sum = sum / a;
+			}
+		}
+		return sum;
+	}
+
+	static void print(int[] arr) {
+		for (int i = 0; i < arr.length; i++) {
+			System.out.print(arr[i] + " ");
+		}
+		System.out.println();
+	}
+}
