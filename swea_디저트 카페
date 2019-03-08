@@ -1,0 +1,87 @@
+처음에 dfs 인줄 모르고 이상하게 접근했다가 삽질
+완탐, 백트랙킹 인거 알고 보니까 금방 할 수 있었음.
+
+=====================================
+
+
+import java.util.*;
+
+class Solution {
+	private static Scanner scan;
+	static int T;
+	static int N;
+	static int[] dx = { -1, -1, 1, 1 };
+	static int[] dy = { -1, 1, -1, 1 };
+	static int[][] map;
+	static boolean[] visit;
+	static int result;
+	static Node start;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		T = scan.nextInt();
+
+		for (int t = 0; t < T; t++) {
+			N = scan.nextInt();
+			map = new int[N][N];
+			result = Integer.MIN_VALUE;
+			visit = new boolean[101];
+
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					map[i][j] = scan.nextInt();
+				}
+			}
+
+			// start
+			// left
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					start = new Node(i, j);
+					dfs(i, j, 0, 0, visit, 0);
+				}
+			}
+
+			if (result == Integer.MIN_VALUE) {
+				result = -1;
+			}
+			System.out.println("#" + (t + 1) + " " + result);
+		}
+	}
+
+	public static void dfs(int x, int y, int point, int dir, boolean[] visit, int turn) {
+		if (turn > 3) {
+
+		} else {
+			if (turn == 3 && x == start.x && y == start.y && result < point) {
+				result = point;
+			} else {
+				for (int k = 0; k < 4; k++) {
+					int tx = x + dx[k];
+					int ty = y + dy[k];
+
+					if (tx >= 0 && ty >= 0 && tx < N && ty < N && !visit[map[tx][ty]]) {
+						visit[map[tx][ty]] = true;
+						if (k == dir) {
+							dfs(tx, ty, point + 1, dir, visit, turn);
+						} else {
+							dfs(tx, ty, point + 1, k, visit, turn + 1);
+						}
+						visit[map[tx][ty]] = false;
+					}
+				}
+			}
+		}
+	}
+
+}
+
+class Node {
+	int x;
+	int y;
+
+	Node(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+}
