@@ -1,0 +1,63 @@
+dp
+런타임 에러 나서 당황했었다. 배열 접근시 확인 잘하자.
+
+
+==================================
+
+import java.util.*;
+
+class Main {
+	private static Scanner scan;
+	static int N;
+	static int B;
+	static int C;
+	static int[] map;
+	static int[] dp;
+	static long result;
+
+	public static void main(String[] args) {
+
+		scan = new Scanner(System.in);
+		N = scan.nextInt();
+		map = new int[N];
+		result = 0;
+		dp = new int[1000001];
+
+		for (int i = 0; i < N; i++) {
+			map[i] = scan.nextInt();
+		}
+
+		B = scan.nextInt();
+		C = scan.nextInt();
+
+		// start
+		for (int i = 0; i < N; i++) {
+			if (dp[map[i]] == 0)
+				result = result + solve(map[i]);
+			else
+				result = result + dp[map[i]];
+		}
+
+		System.out.println(result);
+	}
+
+	public static long solve(int x) {
+		int res = 0;
+		int tx = x;
+
+		x = x - B;
+		if (x > 0) {
+			res = x / C;
+			if (x % C == 0)
+				res++;
+			else
+				res += 2;
+		} else {
+			res = 1;
+		}
+
+		dp[tx] = res;
+		return res;
+	}
+
+}
