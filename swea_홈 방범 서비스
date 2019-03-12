@@ -1,0 +1,99 @@
+bfs
+45min
+
+
+========================
+
+import java.util.*;
+
+public class Solution {
+	static int T;
+	static int N;
+	static int M;
+	static int[][] map;
+	static int result;
+	static int[] dx = { -1, 1, 0, 0 };
+	static int[] dy = { 0, 0, -1, 1 };
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		T = scan.nextInt();
+
+		for (int t = 0; t < T; t++) {
+			N = scan.nextInt();
+			M = scan.nextInt();
+			result = Integer.MIN_VALUE;
+
+			map = new int[N][N];
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					map[i][j] = scan.nextInt();
+				}
+			}
+
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					int res = solution(i, j, new boolean[N][N]);
+					if (res > result) {
+						result = res;
+					}
+				}
+			}
+
+			System.out.println("#" + (t + 1) + " " + result);
+		}
+
+	}
+
+	public static int solution(int i, int j, boolean[][] visit) {
+		int befRes = 1;
+		int res = 0;
+		int t = 1;
+
+		Queue<Node> q = new LinkedList<Node>();
+		q.add(new Node(i, j));
+		if (map[i][j] == 1) {
+			res++;
+		}
+		visit[i][j] = true;
+
+		while (!q.isEmpty()) {
+			int size = q.size();
+			t++;
+
+			while (size > 0) {
+				Node temp = q.poll();
+
+				for (int k = 0; k < 4; k++) {
+					int x = temp.x + dx[k];
+					int y = temp.y + dy[k];
+
+					if (x >= 0 && y >= 0 && x < N && y < N && !visit[x][y]) {
+						visit[x][y] = true;
+						if (map[x][y] == 1) {
+							res++;
+						}
+						q.add(new Node(x, y));
+					}
+				}
+				size--;
+			}
+			// 적자 check.
+			int money = t * t + (t - 1) * (t - 1);
+			if ((res * M) - money >= 0) {
+				befRes = res;
+			}
+		}
+		return befRes;
+	}
+}
+
+class Node {
+	int x;
+	int y;
+
+	Node(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+}
