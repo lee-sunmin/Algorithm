@@ -1,0 +1,125 @@
+dfs - 조합
+
+처음 접근 방법 헤매다가 풀었음.
+문제 이해 제대로 하고 시작하자.
+
+======================================
+
+import java.util.*;
+
+public class Solution {
+	static int T;
+	static int N;
+	static int M;
+	static int C;
+
+	static int[][] map;
+	static int result;
+	static int res1;
+	static int res2;
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		T = scan.nextInt();
+
+		for (int t = 0; t < T; t++) {
+			result = Integer.MIN_VALUE;
+			N = scan.nextInt();
+			M = scan.nextInt();
+			C = scan.nextInt();
+			map = new int[N][N];
+
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					map[i][j] = scan.nextInt();
+				}
+			}
+
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					res1 = -1;
+					res2 = -1;
+					if (j + M - 1 >= N) {
+
+					} else {
+						for (int k = 1; k <= M; k++) {
+							dfs(i, j, new int[k], 0, 1, k, true);
+						}
+
+						runB(i, j + M);
+
+						if (result < res1 + res2) {
+							result = res1 + res2;
+						}
+					}
+				}
+			}
+
+			System.out.println("#" + (t + 1) + " " + result);
+		}
+	}
+
+	public static void runB(int x, int y) {
+		if (y >= N) {
+			x++;
+			y = 0;
+		}
+
+		for (; x < N; x++) {
+			for (; y < N; y++) {
+				if (y + M - 1 >= N) {
+
+				} else {
+					for (int k = 1; k <= M; k++) {
+						dfs(x, y, new int[k], 0, 1, k, false);
+					}
+				}
+			}
+			y = 0;
+		}
+	}
+
+	public static int solve(int x, int y, int[] arr) {
+		int sum = 0;
+		int res = 0;
+		for (int i = 0; i < arr.length; i++) {
+			int ty = y + arr[i] - 1;
+			if (sum + map[x][ty] > C) {
+				res = -1;
+				sum = -1;
+				break;
+			} else {
+				res = res + map[x][ty] * map[x][ty];
+				sum = sum + map[x][ty];
+			}
+		}
+		return res;
+	}
+
+	public static void dfs(int x, int y, int[] arr, int idx, int val, int cnt, boolean A) {
+		if (cnt <= 0) {
+			int res = solve(x, y, arr);
+			if (A) {
+				if (res > res1)
+					res1 = res;
+			} else {
+				if (res > res2)
+					res2 = res;
+			}
+		} else if (val <= M) {
+			arr[idx] = val;
+			dfs(x, y, arr, idx + 1, val + 1, cnt - 1, A);
+			dfs(x, y, arr, idx, val + 1, cnt, A);
+		}
+	}
+}
+
+class Node {
+	int x;
+	int y;
+
+	Node(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+}
