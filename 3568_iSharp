@@ -1,0 +1,81 @@
+시뮬레이션.
+
+
+====================
+
+import java.util.*;
+
+class Main {
+	private static Scanner scan;
+	static String line;
+	static ArrayList<Node> array;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		line = scan.nextLine();
+		array = new ArrayList<Node>();
+
+		int i = 0;
+		char c = line.charAt(i);
+
+		String base = "";
+		while (c != ' ') {
+			base += c;
+			i++;
+			c = line.charAt(i);
+		}
+
+		while (c != ';') {
+			i++;
+			String varNm = "";
+			c = line.charAt(i);
+
+			while ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ') {
+				if (c == ' ') {
+
+				} else {
+					varNm += c;
+				}
+				i++;
+				c = line.charAt(i);
+			}
+			array.add(new Node(varNm));
+
+			while (c != ',' && c != ';') {
+				array.get(array.size() - 1).add(c);
+				i++;
+				c = line.charAt(i);
+			}
+		}
+
+		for (int j = 0; j < array.size(); j++) {
+			System.out.print(base);
+
+			Node temp = array.get(j);
+			Stack<Object> varType = temp.varType;
+
+			while (!varType.isEmpty()) {
+				char t = (char) varType.pop();
+				if (t == '[')
+					t = ']';
+				else if (t == ']')
+					t = '[';
+				System.out.print(t);
+			}
+			System.out.println(" " + temp.varNm + ";");
+		}
+	}
+}
+
+class Node {
+	String varNm;
+	Stack<Object> varType = new Stack<Object>();
+
+	Node(String varNm) {
+		this.varNm = varNm;
+	}
+
+	void add(char a) {
+		varType.add(a);
+	}
+}
