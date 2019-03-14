@@ -1,0 +1,102 @@
+dfs 백트래킹
+
+4개의 점을 찾는다. ㅗ,ㅓ,ㅏ 는 별도로 찾는다. (hx,hy)
+
+추가로 알게된 점
+1. visit을 계속 초기화하니까 시간초과가 떴다.
+마지막에 false로 바꿔주는데 차이가 뭔지 알아야 함.
+( 시간초과 뜨면 visit 잘 쓰고 있는지 꼭 확인 )
+
+
+=================================
+
+import java.util.*;
+
+class Main {
+	private static Scanner scan;
+	static int N;
+	static int M;
+	static int[][] map;
+	static boolean[][] visit;
+	static int[] dx = { -1, 1, 0, 0 };
+	static int[] dy = { 0, 0, -1, 1 };
+	static int[][] hx = { { 0, 0, -1 }, { -1, 0, 1 }, { 0, 0, 1 }, { -1, 0, 1 } };
+	static int[][] hy = { { 1, 2, 1 }, { 0, 1, 0 }, { 1, 2, 1 }, { 1, 1, 1 } };
+	static long result;
+
+	public static void main(String[] args) {
+
+		scan = new Scanner(System.in);
+		N = scan.nextInt();
+		M = scan.nextInt();
+		map = new int[N][M];
+		visit = new boolean[N][M];
+		result = Integer.MIN_VALUE;
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				map[i][j] = scan.nextInt();
+			}
+		}
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				visit[i][j] = true;
+				dfs(i, j, 4, map[i][j]);
+				visit[i][j] = false;
+				otherType(i, j);
+			}
+		}
+		System.out.println(result);
+	}
+
+	static void dfs(int i, int j, int cnt, int sum) {
+
+		if (cnt <= 1) {
+			if (result < sum) {
+				result = sum;
+			}
+		} else {
+			for (int k = 0; k < 4; k++) {
+				int x = i + dx[k];
+				int y = j + dy[k];
+
+				if (x >= 0 && y >= 0 && x < N && y < M && !visit[x][y]) {
+					visit[x][y] = true;
+					dfs(x, y, cnt - 1, sum + map[x][y]);
+					visit[x][y] = false;
+				}
+			}
+		}
+	}
+
+	static void otherType(int i, int j) {
+		int sum = map[i][j];
+		for (int z = 0; z < 4; z++) {
+			sum = map[i][j];
+			for (int k = 0; k < 3; k++) {
+				int x = i + hx[z][k];
+				int y = j + hy[z][k];
+
+				if (x >= 0 && y >= 0 && x < N && y < M) {
+					sum = sum + map[x][y];
+				} else {
+					sum = 0;
+					break;
+				}
+			}
+			if (sum > result)
+				result = sum;
+		}
+	}
+}
+
+class Node {
+	int x;
+	int y;
+
+	Node(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+}
