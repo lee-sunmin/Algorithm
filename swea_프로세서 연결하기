@@ -1,0 +1,148 @@
+
+dfs를 할 때, 4방향 뿐 아니라 본인을 생각하지 않는 경우도 포함됨.
+이때는 k<5로 해서 4일때 본인을 하지 않는다고 하고 넘겨야 함.
+
+
+===========================================
+
+
+import java.util.*;
+
+public class Solution {
+	static int T;
+	static int N;
+
+	static int[][] map;
+	static int result;
+	static int core;
+	static ArrayList<Node> process;
+	static int[] dx = { -1, 1, 0, 0 };
+	static int[] dy = { 0, 0, -1, 1 };
+	static boolean[] visit;
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		T = scan.nextInt();
+
+		for (int t = 0; t < T; t++) {
+			result = Integer.MAX_VALUE;
+			core = Integer.MIN_VALUE;
+			N = scan.nextInt();
+			map = new int[N][N];
+			process = new ArrayList<Node>();
+
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					map[i][j] = scan.nextInt();
+					if (map[i][j] == 1) {
+						if (i != 0 && i != N - 1 && j != 0 && j != N - 1)
+							process.add(new Node(i, j));
+					}
+				}
+			}
+			visit = new boolean[process.size()];
+
+			if (process.size() == 0) {
+				System.out.println("#" + (t + 1) + " " + 0);
+			} else {
+				for (int i = 0; i < process.size(); i++) {
+					dfs(i, 0, 0);
+				}
+
+				if (result == Integer.MAX_VALUE)
+					result = 0;
+				System.out.println("#" + (t + 1) + " " + result);
+			}
+		}
+	}
+
+	public static void dfs(int num, int res, int c) {
+		if (core < c) {
+			core = c;
+			result = res;
+		} else if (core == c) {
+			if (result > res) {
+				result = res;
+			}
+		}
+
+		if (num >= process.size() || num < 0) {
+
+		} else {
+			Node temp = process.get(num);
+			// **본인은 긋지 않고 호출을 할 수도 있음.
+
+			for (int k = 0; k < 5; k++) {
+				if (k == 4) {
+					dfs(num + 1, res, c);
+				}
+
+				else if (canDraw(temp.x, temp.y, k) && !visit[num]) {
+					int cnt = drawLine(temp.x, temp.y, k);
+					dfs(num + 1, res + cnt, c + 1);
+					eraseLine(temp.x, temp.y, k);
+				}
+			}
+		}
+	}
+
+	public static void eraseLine(int x, int y, int k) {
+		x = x + dx[k];
+		y = y + dy[k];
+
+		while (x >= 0 && y >= 0 && x < N && y < N) {
+
+			if (map[x][y] == 2) {
+				map[x][y] = 0;
+			} else {
+				break;
+			}
+			x = x + dx[k];
+			y = y + dy[k];
+		}
+	}
+
+	public static boolean canDraw(int x, int y, int k) {
+		x = x + dx[k];
+		y = y + dy[k];
+		boolean res = false;
+
+		while (x >= 0 && y >= 0 && x < N && y < N) {
+			if (map[x][y] != 0) {
+				return false;
+			} else {
+				res = true;
+			}
+			x = x + dx[k];
+			y = y + dy[k];
+		}
+		return res;
+	}
+
+	public static int drawLine(int x, int y, int k) {
+		int cnt = 0;
+
+		x = x + dx[k];
+		y = y + dy[k];
+
+		while (x >= 0 && y >= 0 && x < N && y < N) {
+			cnt++;
+			map[x][y] = 2;
+
+			x = x + dx[k];
+			y = y + dy[k];
+		}
+
+		return cnt;
+	}
+}
+
+class Node {
+	int x;
+	int y;
+
+	Node(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+}
