@@ -1,0 +1,51 @@
+dfs, 조합
+
+sum을 for문 돌려서 구했더니 시간초과 ㅎ
+dfs 매개변수로 같이 돌리면서 추가해서 통과
+
+
+===============
+
+import java.util.*;
+
+class Main {
+	private static Scanner scan;
+	static int result;
+	static int[] map;
+	static boolean[] visit;
+	static int N;
+	static int L;
+	static int R;
+	static int gidx;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		N = scan.nextInt();
+		visit = new boolean[2000000];
+		map = new int[N];
+		for (int i = 0; i < N; i++) {
+			map[i] = scan.nextInt();
+			visit[map[i]] = true;
+		}
+
+		for (int i = 2; i <= N; i++) {
+			dfs(0, 0, new int[N], i, 0);
+		}
+		result = 1;
+		while (visit[result]) {
+			result++;
+		}
+
+		System.out.println(result);
+	}
+
+	static void dfs(int idx, int val, int[] arr, int cnt, int sum) {
+		if (cnt == 0) {
+			visit[sum] = true;
+		} else if (val < N) {
+			arr[idx] = map[val];
+			dfs(idx + 1, val + 1, arr, cnt - 1, sum + arr[idx]);
+			dfs(idx, val + 1, arr, cnt, sum);
+		}
+	}
+}
