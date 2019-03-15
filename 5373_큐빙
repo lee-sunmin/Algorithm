@@ -1,0 +1,386 @@
+최악의 시뮬레이션 문제......
+
+다른 풀이가 있나 봐야겠다.
+
+========================
+
+import java.util.*;
+
+class Main {
+	private static Scanner scan;
+	static int N;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		N = scan.nextInt();
+
+		for (int n = 0; n < N; n++) {
+			char[][] up = { { 'w', 'w', 'w' }, { 'w', 'w', 'w' }, { 'w', 'w', 'w' } };
+			char[][] down = { { 'y', 'y', 'y' }, { 'y', 'y', 'y' }, { 'y', 'y', 'y' } };
+			char[][] front = { { 'r', 'r', 'r' }, { 'r', 'r', 'r' }, { 'r', 'r', 'r' } };
+			char[][] back = { { 'o', 'o', 'o' }, { 'o', 'o', 'o' }, { 'o', 'o', 'o' } };
+			char[][] left = { { 'g', 'g', 'g' }, { 'g', 'g', 'g' }, { 'g', 'g', 'g' } };
+			char[][] right = { { 'b', 'b', 'b' }, { 'b', 'b', 'b' }, { 'b', 'b', 'b' } };
+
+			int cnt = scan.nextInt();
+			for (int c = 0; c < cnt; c++) {
+				String line = scan.next();
+				run(line.charAt(0), line.charAt(1), up, down, front, back, left, right);
+			}
+
+			// print up
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					System.out.print(up[i][j]);
+				}
+				System.out.println();
+			}
+		}
+
+	}
+
+	public static void run(char state, char loc, char[][] up, char[][] down, char[][] front, char[][] back,
+			char[][] left, char[][] right) {
+
+		char[][] temp = new char[3][3];
+		char[][] temp2 = new char[3][3];
+
+		if (state == 'U') {
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					temp[i][j] = front[i][j];
+					temp2[i][j] = up[i][j];
+				}
+			}
+
+			if (loc == '+') {
+				// 본인 회전.(수정완료)
+				for (int i = 0; i < 3; i++) {
+					for (int j = 0; j < 3; j++) {
+						up[i][j] = temp2[2 - j][i];
+					}
+				}
+
+				for (int i = 0; i < 3; i++) {
+					front[0][i] = right[0][i];
+				}
+				for (int i = 0; i < 3; i++) {
+					right[0][i] = back[0][2 - i];
+				}
+				for (int i = 0; i < 3; i++) {
+					back[0][i] = left[0][2 - i];
+				}
+				for (int i = 0; i < 3; i++) {
+					left[0][i] = temp[0][i];
+				}
+			} else {
+				// 본인 회전.(수정완료)
+				for (int i = 0; i < 3; i++) {
+					for (int j = 0; j < 3; j++) {
+						up[i][j] = temp2[j][2 - i];
+					}
+				}
+
+				for (int i = 0; i < 3; i++) {
+					front[0][i] = left[0][i];
+				}
+				for (int i = 0; i < 3; i++) {
+					left[0][i] = back[0][2 - i];
+				}
+				for (int i = 0; i < 3; i++) {
+					back[0][i] = right[0][2 - i];
+				}
+				for (int i = 0; i < 3; i++) {
+					right[0][i] = temp[0][i];
+				}
+			}
+		} else if (state == 'D') {
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					temp[i][j] = front[i][j];
+					temp2[i][j] = down[i][j];
+				}
+			}
+
+			if (loc == '+') {
+				// 본인 회전.(수정완료2)
+				for (int i = 0; i < 3; i++) {
+					for (int j = 0; j < 3; j++) {
+						down[i][2 - j] = temp2[2 - j][2 - i];
+					}
+				}
+
+				for (int i = 0; i < 3; i++) {
+					front[2][i] = left[2][i];
+				}
+				for (int i = 0; i < 3; i++) {
+					left[2][i] = back[2][2 - i];
+				}
+				for (int i = 0; i < 3; i++) {
+					back[2][i] = right[2][2 - i];
+				}
+				for (int i = 0; i < 3; i++) {
+					right[2][i] = temp[2][i];
+				}
+			} else {
+				// 본인 회전.(수정완료2)
+				for (int i = 0; i < 3; i++) {
+					for (int j = 0; j < 3; j++) {
+						down[i][2 - j] = temp2[j][i];
+					}
+				}
+
+				for (int i = 0; i < 3; i++) {
+					front[2][i] = right[2][i];
+				}
+				for (int i = 0; i < 3; i++) {
+					right[2][i] = back[2][2 - i];
+				}
+				for (int i = 0; i < 3; i++) {
+					back[2][i] = left[2][2 - i];
+				}
+				for (int i = 0; i < 3; i++) {
+					left[2][i] = temp[2][i];
+				}
+			}
+
+		} else if (state == 'F') {
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					temp[i][j] = up[i][j];
+					temp2[i][j] = front[i][j];
+				}
+			}
+
+			if (loc == '+') {
+				// 본인 회전.(maybe)
+				for (int i = 0; i < 3; i++) {
+					for (int j = 0; j < 3; j++) {
+						front[i][j] = temp2[2 - j][i];
+					}
+				}
+
+				for (int i = 0; i < 3; i++) {
+					up[2][i] = left[2 - i][2];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					left[i][2] = down[2][i];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					down[2][i] = right[2 - i][0];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					right[i][0] = temp[2][i];
+				}
+
+			} else {
+				// 본인 회전.(maybe)
+				for (int i = 0; i < 3; i++) {
+					for (int j = 0; j < 3; j++) {
+						front[i][j] = temp2[j][2 - i];
+					}
+				}
+
+				for (int i = 0; i < 3; i++) {
+					up[2][i] = right[i][0];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					right[i][0] = down[2][2 - i];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					down[2][i] = left[i][2];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					// 수정.
+					left[i][2] = temp[2][2 - i];
+				}
+			}
+
+		} else if (state == 'B') {
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					temp[i][j] = up[i][j];
+					temp2[i][j] = back[i][j];
+				}
+			}
+
+			if (loc == '+') {
+				// 본인 회전.(down)
+				for (int i = 0; i < 3; i++) {
+					for (int j = 0; j < 3; j++) {
+						back[i][2 - j] = temp2[2 - j][2 - i];
+					}
+				}
+
+				for (int i = 0; i < 3; i++) {
+					up[0][i] = right[i][2];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					right[i][2] = down[0][2 - i];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					down[0][i] = left[i][0];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					left[i][0] = temp[0][2 - i];
+				}
+			} else {
+				// 본인 회전.(down)
+				for (int i = 0; i < 3; i++) {
+					for (int j = 0; j < 3; j++) {
+						back[i][2 - j] = temp2[j][i];
+					}
+				}
+
+				for (int i = 0; i < 3; i++) {
+					// 수정.
+					// up[0][i] = left[2][2 - i];
+					up[0][i] = left[2 - i][0];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					left[i][0] = down[0][i];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					down[0][i] = right[2 - i][2];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					right[i][2] = temp[0][i];
+				}
+			}
+
+		} else if (state == 'L') {
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					temp[i][j] = front[i][j];
+					temp2[i][j] = left[i][j];
+				}
+			}
+
+			if (loc == '+') {
+				// 본인 회전.(수정완료)
+				for (int i = 0; i < 3; i++) {
+					for (int j = 0; j < 3; j++) {
+						left[i][j] = temp2[2 - j][i];
+					}
+				}
+
+				for (int i = 0; i < 3; i++) {
+					front[i][0] = up[i][0];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					up[i][0] = back[2 - i][0];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					back[i][0] = down[i][0];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					down[i][0] = temp[2 - i][0];
+				}
+			} else {
+				// 본인 회전.(수정완료)
+				for (int i = 0; i < 3; i++) {
+					for (int j = 0; j < 3; j++) {
+						left[i][j] = temp2[j][2 - i];
+					}
+				}
+
+				for (int i = 0; i < 3; i++) {
+					front[i][0] = down[2 - i][0];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					down[i][0] = back[i][0];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					back[i][0] = up[2 - i][0];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					up[i][0] = temp[i][0];
+				}
+			}
+		} else if (state == 'R') {
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					temp[i][j] = front[i][j];
+					temp2[i][j] = right[i][j];
+				}
+			}
+
+			if (loc == '+') {
+				// 본인 회전.(maybe)
+				for (int i = 0; i < 3; i++) {
+					for (int j = 0; j < 3; j++) {
+						right[i][j] = temp2[2 - j][i];
+					}
+				}
+
+				for (int i = 0; i < 3; i++) {
+					front[i][2] = down[2 - i][2];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					down[i][2] = back[i][2];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					back[i][2] = up[2 - i][2];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					up[i][2] = temp[i][2];
+				}
+			} else {
+				// 본인 회전.(maybe)
+				for (int i = 0; i < 3; i++) {
+					for (int j = 0; j < 3; j++) {
+						right[i][j] = temp2[j][2 - i];
+					}
+				}
+
+				for (int i = 0; i < 3; i++) {
+					front[i][2] = up[i][2];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					up[i][2] = back[2 - i][2];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					back[i][2] = down[i][2];
+				}
+
+				for (int i = 0; i < 3; i++) {
+					down[i][2] = temp[2 - i][2];
+				}
+			}
+		}
+
+	}
+
+	static void print(char[][] map) {
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				System.out.print(map[i][j] + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
+}
