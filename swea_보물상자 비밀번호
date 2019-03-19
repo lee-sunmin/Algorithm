@@ -1,0 +1,80 @@
+시뮬레이션
+
+=================
+
+import java.util.*;
+
+class Solution {
+	private static Scanner scan;
+	static int T;
+	static int N;
+	static int K;
+	static ArrayList list;
+	static ArrayList value;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+
+		T = scan.nextInt();
+
+		for (int t = 0; t < T; t++) {
+			N = scan.nextInt();
+			K = scan.nextInt();
+			list = new ArrayList();
+			value = new ArrayList();
+			scan.nextLine();
+			String line = scan.nextLine();
+			for (int l = 0; l < line.length(); l++) {
+				list.add(line.charAt(l));
+			}
+
+			int size = N / 4;
+
+			int v = 0;
+			int gop = size - 1;
+			for (int s = 0; s < size; s++) {
+
+				for (int i = 0; i <= N; i++) {
+					if (gop == -1) {
+						// 한바퀴 돌았다는 뜻.
+						if (!value.contains(v)) {
+							int idx = -1;
+							
+							for (int j = 0; j < value.size(); j++) {
+								if ((int) value.get(j) < v) {
+									idx = j;
+									break;
+								}
+							}
+							if (idx == -1) {
+								value.add(v);
+							} else {
+								value.add(idx, v);
+							}
+						}
+
+						if (i == N) {
+							break;
+						}
+						gop = size - 1;
+						v = 0;
+					}
+					v += returnValue((char) list.get(i), gop);
+					gop--;
+				}
+				char temp = (char) list.get(list.size()-1);
+				list.remove(list.size()-1);
+				list.add(0,temp);
+			}
+			System.out.println("#"+(t+1)+" "+value.get(K - 1));
+		}
+	}
+
+	static int returnValue(char input, int gop) {
+		if (input >= '0' && input <= '9') {
+			return (int) (((int) input - 48) * Math.pow(16, gop));
+		} else {
+			return (int) (((int) input - 55) * Math.pow(16, gop));
+		}
+	}
+}
