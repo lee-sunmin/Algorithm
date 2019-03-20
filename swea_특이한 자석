@@ -1,0 +1,108 @@
+백준 톱니바퀴2(?) 와 동일한 문제
+
+시뮬레이션
+
+======================
+
+import java.util.*;
+
+class Solution {
+	private static Scanner scan;
+	static int T;
+	static int K;
+	static ArrayList[] mag;
+	static ArrayList<Node> chg;
+	static int result;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+
+		T = scan.nextInt();
+
+		for (int t = 0; t < T; t++) {
+			K = scan.nextInt();
+			mag = new ArrayList[4];
+			chg = new ArrayList<Node>();
+			result = 0;
+
+			for (int i = 0; i < 4; i++) {
+				mag[i] = new ArrayList();
+				for (int j = 0; j < 8; j++) {
+					mag[i].add(scan.nextInt());
+				}
+			}
+
+			for (int k = 0; k < K; k++) {
+				int idx = scan.nextInt();
+				int loc = scan.nextInt();
+				chg.add(new Node(idx - 1, loc));
+				run(idx - 1, loc);
+				move();
+				chg = new ArrayList<Node>();
+			}
+
+			for (int i = 0; i < 4; i++) {
+				if ((int) mag[i].get(0) == 1) {
+					result = result + (int) Math.pow(2, i);
+				}
+			}
+
+			System.out.println("#" + (t + 1) + " " + result);
+		}
+
+	}
+
+	static void move() {
+		for (int i = 0; i < chg.size(); i++) {
+			Node temp = chg.get(i);
+
+			if (temp.loc == 1) {
+				int t = (int) mag[temp.idx].get(7);
+				mag[temp.idx].remove(7);
+				mag[temp.idx].add(0, t);
+			} else if (temp.loc == -1) {
+				int t = (int) mag[temp.idx].get(0);
+				mag[temp.idx].remove(0);
+				mag[temp.idx].add(t);
+			}
+		}
+	}
+
+	static void run(int idx, int loc) {
+		int i = idx;
+		int tloc = loc;
+
+		while (i + 1 < 4) {
+			if (mag[i].get(2) == mag[i + 1].get(6)) {
+				break;
+			} else {
+				tloc = tloc * -1;
+				chg.add(new Node(i + 1, tloc));
+			}
+			i++;
+		}
+
+		i = idx;
+		tloc = loc;
+		while (i - 1 > -1) {
+			if (mag[i].get(6) == mag[i - 1].get(2)) {
+				break;
+			} else {
+				tloc = tloc * -1;
+				chg.add(new Node(i - 1, tloc));
+			}
+			i--;
+		}
+	}
+
+}
+
+class Node {
+	int idx;
+	int loc;
+
+	Node(int idx, int loc) {
+		this.idx = idx;
+		this.loc = loc;
+	}
+}
