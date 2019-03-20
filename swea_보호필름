@@ -1,0 +1,134 @@
+dfs 조합 2번 :)
+
+========================
+
+import java.util.*;
+
+class Solution {
+	private static Scanner scan;
+	static int T;
+	static int D;
+	static int W;
+	static int K;
+	static int[][] map;
+	static int[][] tempMap;
+	static int result;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+
+		T = scan.nextInt();
+
+		for (int t = 0; t < T; t++) {
+			D = scan.nextInt();
+			W = scan.nextInt();
+			K = scan.nextInt();
+			result = Integer.MAX_VALUE;
+			map = new int[D][W];
+			tempMap = new int[D][W];
+
+			for (int d = 0; d < D; d++) {
+				for (int w = 0; w < W; w++) {
+					map[d][w] = scan.nextInt();
+					tempMap[d][w] = map[d][w];
+				}
+			}
+
+			if (check()) {
+				System.out.println("#" + (t + 1) + " 0");
+				continue;
+			}
+
+			for (int i = 1; i < D; i++) {
+				dfs(0, 0, new int[i], i);
+				if (result != Integer.MAX_VALUE)
+					break;
+			}
+			System.out.println("#" + (t + 1) + " " + result);
+		}
+
+	}
+
+	static void run(int[] arr, boolean[] types) {
+		for (int i = 0; i < arr.length; i++) {
+			makeLine(arr[i], types[i]);
+		}
+
+		if (check()) {
+			if (arr.length < result) {
+				result = arr.length;
+				return;
+			}
+		}
+
+		for (int i = 0; i < D; i++) {
+			for (int j = 0; j < W; j++) {
+				map[i][j] = tempMap[i][j];
+			}
+		}
+	}
+
+	static boolean check() {
+		for (int j = 0; j < W; j++) {
+			int type = map[0][j];
+			int chk = 1;
+			for (int i = 1; i < D; i++) {
+				if (chk >= K) {
+					continue;
+				}
+
+				if (type == map[i][j])
+					chk++;
+				else {
+					type = map[i][j];
+					chk = 1;
+				}
+			}
+			if (chk < K)
+				return false;
+		}
+		return true;
+	}
+
+	static void makeLine(int row, boolean type) {
+		int t = 0;
+		if (!type)
+			t = 1;
+
+		for (int w = 0; w < W; w++) {
+			map[row][w] = t;
+		}
+	}
+
+	static void dfs2(int idx, boolean[] types, int cnt, int[] rows) {
+		if (result != Integer.MAX_VALUE)
+			return;
+
+		if (cnt == 0) {
+			run(rows, types);
+			if (result != Integer.MAX_VALUE)
+				return;
+		} else if (idx < types.length) {
+			types[idx] = true;
+			dfs2(idx + 1, types, cnt - 1, rows);
+			types[idx] = false;
+			dfs2(idx + 1, types, cnt - 1, rows);
+		}
+	}
+
+	static void dfs(int idx, int val, int[] arr, int cnt) {
+		if (result != Integer.MAX_VALUE)
+			return;
+
+		if (cnt == 0) {
+			int size = arr.length;
+			dfs2(0, new boolean[size], size, arr);
+			if (result != Integer.MAX_VALUE)
+				return;
+		} else if (val < D) {
+			arr[idx] = val;
+			dfs(idx + 1, val + 1, arr, cnt - 1);
+			dfs(idx, val + 1, arr, cnt);
+		}
+	}
+}
