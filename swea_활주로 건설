@@ -1,0 +1,131 @@
+시뮬레이션
+
+================
+
+import java.util.*;
+
+class Solution {
+	private static Scanner scan;
+	static int T;
+	static int N;
+	static int X;
+	static int[][] map;
+	static boolean[][] visit;
+	static int result;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		T = scan.nextInt();
+
+		for (int t = 0; t < T; t++) {
+			N = scan.nextInt();
+			X = scan.nextInt();
+			map = new int[N][N];
+			visit = new boolean[N][N];
+			result = 0;
+
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					map[i][j] = scan.nextInt();
+				}
+			}
+
+			for (int i = 0; i < N; i++) {
+				if (check(i))
+					result++;
+			}
+
+			visit = new boolean[N][N];
+
+			for (int j = 0; j < N; j++) {
+				if (check2(j))
+					result++;
+			}
+
+			System.out.println("#" + (t + 1) + " " + result);
+		}
+	}
+
+	static boolean check2(int j) {
+		Node node = new Node(map[0][j]);
+
+		for (int i = 1; i < N; i++) {
+			if (map[i][j] == node.num) {
+				if (!visit[i][j])
+					node.cnt++;
+				else
+					node.cnt = 0;
+			} else if (node.num - map[i][j] == 1) {
+				if (i + X - 1 >= N)
+					return false;
+
+				Node temp = new Node(map[i][j]);
+				visit[i][j] = true;
+				for (int k = 1; k < X; k++) {
+					if (map[i + k][j] == temp.num)
+						visit[i + k][j] = true;
+					else
+						return false;
+				}
+				node = new Node(map[i + X - 1][j]);
+				node.cnt = 0;
+				i = i + X - 1;
+			} else if (node.num - map[i][j] == -1) {
+				if (node.cnt >= X)
+					node = new Node(map[i][j]);
+				else
+					return false;
+			} else if (Math.abs(map[i][j] - node.num) > 1) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	static boolean check(int i) {
+		Node node = new Node(map[i][0]);
+
+		for (int j = 1; j < N; j++) {
+			if (map[i][j] == node.num) {
+				if (!visit[i][j])
+					node.cnt++;
+				else
+					node.cnt = 0;
+			} else if (node.num - map[i][j] == 1) {
+				if (j + X - 1 >= N)
+					return false;
+
+				Node temp = new Node(map[i][j]);
+				visit[i][j] = true;
+				for (int k = 1; k < X; k++) {
+					if (map[i][j + k] == temp.num)
+						visit[i][j + k] = true;
+					else
+						return false;
+				}
+				node = new Node(map[i][j + X - 1]);
+				node.cnt = 0;
+				j = j + X - 1;
+			} else if (node.num - map[i][j] == -1) {
+				if (node.cnt >= X)
+					node = new Node(map[i][j]);
+				else
+					return false;
+			} else if (Math.abs(map[i][j] - node.num) > 1) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+}
+
+class Node {
+	int num;
+	int cnt;
+
+	Node(int num) {
+		this.num = num;
+		this.cnt = 1;
+	}
+}
