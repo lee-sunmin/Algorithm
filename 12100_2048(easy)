@@ -1,0 +1,203 @@
+중복조합
+시뮬레이션
+
+* 한번만 합쳐야 하는 조건.. visit 조건 하나 빼먹었다가 엄청 고생했음
+
+===============================
+
+import java.util.*;
+
+class Main {
+	private static Scanner scan;
+	static int N;
+	static int result;
+	static int[][] map;
+	static int[][] tempMap;
+	static int[] dx = { -1, 0, 1, 0 };
+	static int[] dy = { 0, 1, 0, -1 };
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+
+		result = 0;
+		N = scan.nextInt();
+		map = new int[N + 1][N + 1];
+		tempMap = new int[N + 1][N + 1];
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				map[i][j] = scan.nextInt();
+				tempMap[i][j] = map[i][j];
+			}
+		}
+
+		dfs(0, new int[5], 5);
+		System.out.println(result);
+	}
+
+	static void run(int[] arr) {
+		for (int c = 0; c < arr.length; c++) {
+			boolean[][] visit = new boolean[N][N];
+
+			int k = arr[c];
+			if (arr[c] == 0) {
+				// 위.
+				for (int j = 0; j < N; j++) {
+					for (int i = 0; i < N; i++) {
+						if (map[i][j] > 0) {
+							int bx = i;
+							int by = j;
+							int x = i + dx[k];
+							int y = j + dy[k];
+							while (x >= 0 && y >= 0 && x < N && y < N) {
+								if (map[x][y] > 0 && map[x][y] == map[bx][by]) {
+									if (!visit[x][y] && !visit[bx][by]) {
+										map[x][y] = map[x][y] * 2;
+										map[bx][by] = 0;
+										visit[x][y] = true;
+									} else {
+										break;
+									}
+								} else if (map[x][y] > 0 && map[x][y] != map[bx][by]) {
+									break;
+								} else if (map[x][y] == 0) {
+									map[x][y] = map[bx][by];
+									map[bx][by] = 0;
+								}
+
+								bx = x;
+								by = y;
+								x = x + dx[k];
+								y = y + dy[k];
+							}
+						}
+					}
+				}
+			} else if (arr[c] == 1) {
+				// 오른
+				for (int i = 0; i < N; i++) {
+					for (int j = N - 1; j >= 0; j--) {
+
+						if (map[i][j] > 0) {
+							int bx = i;
+							int by = j;
+							int x = i + dx[k];
+							int y = j + dy[k];
+							while (x >= 0 && y >= 0 && x < N && y < N) {
+								if (map[x][y] > 0 && map[x][y] == map[bx][by]) {
+									if (!visit[x][y] && !visit[bx][by]) {
+										map[x][y] = map[x][y] * 2;
+										map[bx][by] = 0;
+										visit[x][y] = true;
+									} else {
+										break;
+									}
+								} else if (map[x][y] > 0 && map[x][y] != map[bx][by]) {
+									break;
+								} else if (map[x][y] == 0) {
+									map[x][y] = map[bx][by];
+									map[bx][by] = 0;
+								}
+
+								bx = x;
+								by = y;
+								x = x + dx[k];
+								y = y + dy[k];
+							}
+						}
+					}
+				}
+			} else if (arr[c] == 2) {
+				// 아래.
+				for (int j = 0; j < N; j++) {
+					for (int i = N - 1; i >= 0; i--) {
+						if (map[i][j] > 0) {
+							int bx = i;
+							int by = j;
+							int x = i + dx[k];
+							int y = j + dy[k];
+							while (x >= 0 && y >= 0 && x < N && y < N) {
+								if (map[x][y] > 0 && map[x][y] == map[bx][by] && !visit[x][y]) {
+									if (!visit[x][y] && !visit[bx][by]) {
+										map[x][y] = map[x][y] * 2;
+										map[bx][by] = 0;
+										visit[x][y] = true;
+									} else
+										break;
+								} else if (map[x][y] > 0 && map[x][y] != map[bx][by]) {
+									break;
+								} else if (map[x][y] == 0) {
+									map[x][y] = map[bx][by];
+									map[bx][by] = 0;
+								}
+
+								bx = x;
+								by = y;
+								x = x + dx[k];
+								y = y + dy[k];
+							}
+						}
+					}
+				}
+			} else {
+				// 왼.
+				for (int i = 0; i < N; i++) {
+					for (int j = 0; j < N; j++) {
+
+						if (map[i][j] > 0) {
+							int bx = i;
+							int by = j;
+							int x = i + dx[k];
+							int y = j + dy[k];
+							while (x >= 0 && y >= 0 && x < N && y < N) {
+								if (map[x][y] > 0 && map[x][y] == map[bx][by]) {
+									if (!visit[x][y] && !visit[bx][by]) {
+										map[x][y] = map[x][y] * 2;
+										map[bx][by] = 0;
+										visit[x][y] = true;
+									} else {
+										break;
+									}
+								} else if (map[x][y] > 0 && map[x][y] != map[bx][by]) {
+									break;
+								} else if (map[x][y] == 0) {
+									map[x][y] = map[bx][by];
+									map[bx][by] = 0;
+								}
+
+								bx = x;
+								by = y;
+								x = x + dx[k];
+								y = y + dy[k];
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	static void dfs(int idx, int[] arr, int cnt) {
+		if (cnt == 0) {
+			run(arr);
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					if (map[i][j] > result) {
+						result = map[i][j];
+					}
+				}
+			}
+
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					map[i][j] = tempMap[i][j];
+				}
+			}
+		} else if (idx < 5) {
+			for (int i = 0; i < 4; i++) {
+				arr[idx] = i;
+				dfs(idx + 1, arr, cnt - 1);
+			}
+		}
+	}
+}
