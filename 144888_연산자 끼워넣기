@@ -92,3 +92,104 @@ class Main {
 		System.out.println();
 	}
 }
+
+
+
+=========================================
+
+2번째 풀이,  전체 동일 스택 사용
+
+import java.util.*;
+
+class Main {
+	private static Scanner scan;
+	static int N;
+	static int max;
+	static int min;
+	static int[] num;
+	static Stack sNum;
+	static ArrayList oper;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		N = scan.nextInt();
+		num = new int[N];
+		oper = new ArrayList();
+		sNum = new Stack();
+		min = Integer.MAX_VALUE;
+		max = Integer.MIN_VALUE;
+
+		for (int i = 0; i < N; i++) {
+			num[i] = scan.nextInt();
+		}
+
+		for (int i = N - 1; i >= 0; i--) {
+			sNum.add(num[i]);
+		}
+
+		for (int i = 0; i < 4; i++) {
+			int a = scan.nextInt();
+			for (int j = 0; j < a; j++) {
+				oper.add(i);
+			}
+		}
+
+		dfs(oper.size(), 0, new int[oper.size()], new boolean[oper.size()]);
+
+		System.out.println(max);
+		System.out.println(min);
+	}
+
+	public static void calc(int[] arr) {
+		int i = 0;
+		while (sNum.size() > 1) {
+			int first = (int) sNum.pop();
+			int second = (int) sNum.pop();
+			if ((int) oper.get(arr[i]) == 0) {
+				sNum.push(first + second);
+			} else if ((int) oper.get(arr[i]) == 1) {
+				sNum.push(first - second);
+			} else if ((int) oper.get(arr[i]) == 2) {
+				sNum.push(first * second);
+			} else {
+				sNum.push(first / second);
+			}
+			i++;
+		}
+
+		if ((int) sNum.peek() > max)
+			max = (int) sNum.peek();
+
+		if ((int) sNum.peek() < min)
+			min = (int) sNum.peek();
+	}
+
+	public static void dfs(int cnt, int idx, int[] arr, boolean[] visit) {
+		if (cnt == 0) {
+			calc(arr);
+			sNum = new Stack();
+			for (int i = N - 1; i >= 0; i--) {
+				sNum.add(num[i]);
+			}
+		} else if (idx < N - 1) {
+			for (int i = 0; i < oper.size(); i++) {
+				if (!visit[i]) {
+					arr[idx] = i;
+					visit[i] = true;
+					dfs(cnt - 1, idx + 1, arr, visit);
+					visit[i] = false;
+				}
+			}
+		}
+	}
+}
+
+class Node {
+	int num;
+	int cnt;
+
+	Node(int num) {
+		this.num = num;
+		this.cnt = 1;
+	}
+}
