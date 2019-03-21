@@ -183,13 +183,3 @@ class Main {
 		}
 	}
 }
-
-class Node {
-	int num;
-	int cnt;
-
-	Node(int num) {
-		this.num = num;
-		this.cnt = 1;
-	}
-}
