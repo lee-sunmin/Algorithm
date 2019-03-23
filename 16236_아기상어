@@ -122,3 +122,135 @@ class Node {
 		this.cnt = cnt;
 	}
 }
+
+
+
+=========================
+두 번째 풀어도 헷갈렸다.
+Result 해주는 부분에서 잘못 생각해서 약간 헤맸음
+이전과는 다르게 check 해주는 함수를 추가 했는데, 아주 쪼오끔 시간 줄었음 
+
+import java.util.*;
+
+class Main {
+	private static Scanner scan;
+	static int N;
+	static int[][] map;
+	static boolean[][] visit;
+	static int result;
+	static int res1;
+	static Node shark;
+	static int fishCnt;
+	static int sharkSize;
+	static int[] dx = { -1, 0, 0, 1 };
+	static int[] dy = { 0, -1, 1, 0 };
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		N = scan.nextInt();
+		map = new int[N][N];
+		visit = new boolean[N][N];
+		fishCnt = 0;
+		sharkSize = 2;
+		result = 0;
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				map[i][j] = scan.nextInt();
+				if (map[i][j] == 9)
+					shark = new Node(i, j);
+			}
+		}
+
+		while (!check()) {
+			visit = new boolean[N][N];
+			Node res = bfs();
+			if (res.x == -1 && res.y == -1) {
+				System.out.println(result);
+				return;
+			}
+			result += res1;
+			res1 = 0;
+			map[shark.x][shark.y] = 0;
+			shark = new Node(res.x, res.y);
+			map[res.x][res.y] = 9;
+
+			fishCnt++;
+			if (fishCnt % sharkSize == 0) {
+				sharkSize++;
+				fishCnt = 0;
+			}
+		}
+		System.out.println(result);
+	}
+
+	static boolean check() {
+		boolean brk = true;
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				if (map[i][j] != 0 && map[i][j] != 9 && map[i][j] < sharkSize) {
+					brk = false;
+				}
+			}
+		}
+
+		return brk;
+	}
+
+	static Node bfs() {
+		Queue<Node> q = new LinkedList<Node>();
+		q.add(shark);
+		visit[shark.x][shark.y] = true;
+		Node res = new Node(-1, -1);
+
+		while (!q.isEmpty()) {
+			int size = q.size();
+
+			while (size > 0) {
+				Node temp = q.poll();
+
+				for (int k = 0; k < 4; k++) {
+					int x = temp.x + dx[k];
+					int y = temp.y + dy[k];
+
+					if (x >= 0 && y >= 0 && x < N && y < N && !visit[x][y]) {
+						if (map[x][y] == 0 || map[x][y] == sharkSize) {
+							q.add(new Node(x, y));
+							visit[x][y] = true;
+						} else if (map[x][y] > sharkSize) {
+
+						} else if (map[x][y] < sharkSize) {
+							if (res.x != -1 && res.y != -1) {
+								if (res.x > x) {
+									res = new Node(x, y);
+								} else if (res.x == x && res.y > y) {
+									res = new Node(x, y);
+								}
+							} else {
+								res = new Node(x, y);
+							}
+						}
+					}
+				}
+				size--;
+			}
+			res1++;
+			if (res.x != -1 && res.y != -1)
+				return res;
+		}
+		return res;
+	}
+
+}
+
+class Node {
+	int x;
+	int y;
+
+	Node(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+}
+
