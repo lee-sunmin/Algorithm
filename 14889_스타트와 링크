@@ -1,0 +1,67 @@
+dfs 조합
+난이도 낮음 30분
+
+
+====================
+
+import java.util.*;
+
+class Main {
+	private static Scanner scan;
+	static int T;
+	static int N;
+	static int N2;
+	static int[][] map;
+	static int result;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		N = scan.nextInt();
+		result = Integer.MAX_VALUE;
+		map = new int[N + 1][N + 1];
+		for (int i = 1; i < N + 1; i++) {
+			for (int j = 1; j < N + 1; j++) {
+				map[i][j] = scan.nextInt();
+			}
+		}
+
+		N2 = N / 2;
+		dfs(new int[N + 1], 1, 1, N2);
+		System.out.println(result);
+	}
+
+	static void calc(int[] arr) {
+		int sumA = 0;
+		int sumB = 0;
+		for (int i = 1; i < arr.length; i++) {
+			if (arr[i] != 0) {
+				// A
+				for (int j = 1; j < arr.length; j++) {
+					if (j != i && arr[j] != 0)
+						sumA += map[i][j];
+				}
+			} else {
+				// B
+				for (int j = 1; j < arr.length; j++) {
+					if (j != i && arr[j] == 0)
+						sumB += map[i][j];
+				}
+			}
+		}
+
+		int res = Math.abs(sumA - sumB);
+		if (res < result)
+			result = res;
+	}
+
+	static void dfs(int[] arr, int idx, int val, int cnt) {
+		if (cnt == 0) {
+			calc(arr);
+		} else if (idx < N + 1 && val < N + 1) {
+			arr[idx] = val;
+			dfs(arr, idx + 1, val + 1, cnt - 1);
+			arr[idx] = 0;
+			dfs(arr, idx + 1, val + 1, cnt);
+		}
+	}
+}
