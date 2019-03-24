@@ -1,0 +1,107 @@
+bfs를 사용하는데 이동 방향이 2가지 타입으로 나뉨.
+
+여기서 포인트는 원숭이가 일반 4방향으로 가다가 8방향으로 가는거랑
+8방향으로 간다음에 4방향으로 가는거랑 결과가 같다는 것!
+
+따라서, 4방향 -> 8방향 -> 4방향이나
+4방향 -> 4방향 -> 8방향을 같게 생각해서 visit배열을 3차원으로만 만들어주면 된다.
+
+이때, visit배열의 3차원에 들어가는 조건은 말점프(8방향)를 한 횟수.
+
+따라서, visit[x][y][k]가 되는거고 이 visit배열만 사용하면 어렵지 않게 풀 수 있다.
+
+한 Node에 대하여 4방향, 8방향으로 모두 넣어주면 됨,
+
+==================================
+
+import java.util.*;
+
+class Main {
+	private static Scanner scan;
+	static int K;
+	static int W;
+	static int H;
+	static int[][] map;
+	static boolean[][][] visit;
+	static int result;
+	static int[] dx = { -1, 1, 0, 0 };
+	static int[] dy = { 0, 0, -1, 1 };
+	static int[] hx = { -1, -2, -2, -1, 1, 2, 2, 1 };
+	static int[] hy = { -2, -1, 1, 2, -2, -1, 1, 2 };
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		K = scan.nextInt();
+		W = scan.nextInt();
+		H = scan.nextInt();
+
+		result = Integer.MAX_VALUE;
+		map = new int[H][W];
+		for (int i = 0; i < H; i++) {
+			for (int j = 0; j < W; j++) {
+				map[i][j] = scan.nextInt();
+			}
+		}
+
+		visit = new boolean[H][W][K + 1];
+
+		System.out.println(bfs());
+	}
+
+	static int bfs() {
+		Queue<Node> q = new LinkedList<Node>();
+		q.add(new Node(0, 0, 0, 0));
+		visit[0][0][0] = true;
+
+		while (!q.isEmpty()) {
+			Node node = q.poll();
+
+			int cnt = node.cnt;
+			int k = node.k;
+
+			if (node.x == H - 1 && node.y == W - 1) {
+				return cnt;
+			}
+
+			for (int t = 0; t < 4; t++) {
+				int x = node.x + dx[t];
+				int y = node.y + dy[t];
+				if (x >= 0 && y >= 0 && x < H && y < W && !visit[x][y][k]) {
+					if (map[x][y] == 0) {
+						visit[x][y][k] = true;
+						q.add(new Node(x, y, cnt + 1, k));
+					}
+				}
+			}
+
+			if (k < K) {
+				k++;
+				for (int t = 0; t < 8; t++) {
+					int x = node.x + hx[t];
+					int y = node.y + hy[t];
+					if (x >= 0 && y >= 0 && x < H && y < W && !visit[x][y][k]) {
+						if (map[x][y] == 0) {
+							visit[x][y][k] = true;
+							q.add(new Node(x, y, cnt + 1, k));
+						}
+					}
+				}
+			}
+		}
+		return -1;
+	}
+}
+
+class Node {
+	int x;
+	int y;
+	int cnt;
+	int k;
+
+	Node(int x, int y, int cnt, int k) {
+		this.x = x;
+		this.y = y;
+		this.cnt = cnt;
+		this.k = k;
+	}
+}
