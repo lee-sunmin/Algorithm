@@ -1,0 +1,145 @@
+45분
+
+bfs
+
+포인트는 모든 Map의 끝을 '-'로 감싸서 떨어졌을때 조건 단순하게 하기 :)
+10개 이상일때 -1 출력하는거 놓쳐서 헤맸음. 아쉽.
+
+
+==============================
+
+import java.util.*;
+
+class Main {
+	private static Scanner scan;
+	static int N;
+	static int M;
+	static int result;
+	static char[][] map;
+	static char[][] tempmap;
+	static boolean[][][][] visit;
+	static int[] dx = { -1, 0, 1, 0 };
+	static int[] dy = { 0, 1, 0, -1 };
+	static Node coin;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+
+		result = Integer.MAX_VALUE;
+		N = scan.nextInt();
+		M = scan.nextInt();
+		map = new char[N + 2][M + 2];
+		tempmap = new char[N + 2][M + 2];
+		visit = new boolean[N + 2][M + 2][N + 2][M + 2];
+
+		scan.nextLine();
+		for (int i = 0; i < N + 2; i++) {
+			String line = "";
+			if (i == 0 || i == N + 1) {
+
+			} else {
+				line = scan.nextLine();
+			}
+			for (int j = 0; j < M + 2; j++) {
+
+				if (i == 0 || i == N + 1 || j == 0 || j == M + 1) {
+					map[i][j] = '-';
+				} else {
+					map[i][j] = line.charAt(j - 1);
+					tempmap[i][j] = map[i][j];
+					if (map[i][j] == 'o') {
+						map[i][j] = '.';
+						tempmap[i][j] = '.';
+						if (coin == null) {
+							coin = new Node(i, j);
+						} else {
+							coin.x2 = i;
+							coin.y2 = j;
+						}
+					}
+				}
+			}
+		}
+		System.out.println(bfs());
+	}
+
+	static int bfs() {
+		Queue<Node> q = new LinkedList<Node>();
+		q.add(coin);
+		visit[coin.x1][coin.y1][coin.x2][coin.y2] = true;
+
+		int cnt = 0;
+		while (!q.isEmpty()) {
+			int size = q.size();
+			cnt++;
+			if (cnt > 10)
+				return -1;
+			while (size > 0) {
+				Node temp = q.poll();
+				Node newNode = new Node();
+				boolean ismove = false;
+
+				for (int k = 0; k < 4; k++) {
+					int x1 = temp.x1 + dx[k];
+					int y1 = temp.y1 + dy[k];
+					int x2 = temp.x2 + dx[k];
+					int y2 = temp.y2 + dy[k];
+
+					if (map[x1][y1] != '-' && map[x2][y2] != '-' && !visit[x1][y1][x2][y2]) {
+						if (map[x1][y1] == '.') {
+							newNode = new Node(x1, y1);
+							ismove = true;
+						} else if (map[x1][y1] == '#') {
+							newNode = new Node(temp.x1, temp.y1);
+						}
+						if (map[x2][y2] == '.') {
+							newNode.x2 = x2;
+							newNode.y2 = y2;
+							ismove = true;
+						} else if (map[x2][y2] == '#') {
+							newNode.x2 = temp.x2;
+							newNode.y2 = temp.y2;
+						}
+
+						if (newNode.x1 == newNode.x2 && newNode.y1 == newNode.y2) {
+
+						} else if (ismove) {
+							visit[newNode.x1][newNode.y1][newNode.x2][newNode.y2] = true;
+							q.add(newNode);
+						}
+					} else {
+						// 둘중에 하나만 떨어졌음.
+						if ((map[x1][y1] == '-' && map[x2][y2] != '-') || (map[x1][y1] != '-' && map[x2][y2] == '-')) {
+							return cnt;
+						}
+					}
+				}
+				size--;
+			}
+		}
+		return -1;
+	}
+}
+
+class Node {
+	int x1;
+	int y1;
+	int x2;
+	int y2;
+
+	Node() {
+
+	}
+
+	Node(int x1, int y1) {
+		this.x1 = x1;
+		this.y1 = y1;
+	}
+
+	Node(int x1, int y1, int x2, int y2) {
+		this.x1 = x1;
+		this.y1 = y1;
+		this.x2 = x2;
+		this.y2 = y2;
+	}
+}
