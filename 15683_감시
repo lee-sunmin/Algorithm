@@ -1,0 +1,138 @@
+dfs완탐
+40분
+
+
+=========================
+
+import java.util.*;
+
+class Main {
+	private static Scanner scan;
+	static int N;
+	static int M;
+	static int result;
+	static int[][] map;
+	static int[][] tempmap;
+	static ArrayList<Node> cctv;
+	static int cctvCnt;
+	static int[] dx = { -1, 0, 1, 0 };
+	static int[] dy = { 0, 1, 0, -1 };
+	// 북 동 남 서.
+	static int[][][] dir = { {}, { { 1, 0, 0, 0 }, { 0, 1, 0, 0 }, { 0, 0, 1, 0 }, { 0, 0, 0, 1 } },
+			{ { 1, 0, 1, 0 }, { 0, 1, 0, 1 }, { 1, 0, 1, 0 }, { 0, 1, 0, 1 } },
+			{ { 1, 1, 0, 0 }, { 0, 1, 1, 0 }, { 0, 0, 1, 1 }, { 1, 0, 0, 1 } },
+			{ { 1, 1, 0, 1 }, { 1, 1, 1, 0 }, { 0, 1, 1, 1 }, { 1, 0, 1, 1 } },
+			{ { 1, 1, 1, 1 }, { 1, 1, 1, 1 }, { 1, 1, 1, 1 }, { 1, 1, 1, 1 } } };
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+
+		result = Integer.MAX_VALUE;
+		N = scan.nextInt();
+		M = scan.nextInt();
+		map = new int[N][M];
+		tempmap = new int[N][M];
+		cctv = new ArrayList<Node>();
+		cctvCnt = 0;
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				map[i][j] = scan.nextInt();
+				tempmap[i][j] = map[i][j];
+				if (map[i][j] >= 1 && map[i][j] <= 5) {
+					cctv.add(new Node(i, j, map[i][j]));
+				} else if (map[i][j] == 6) {
+					cctvCnt++;
+				}
+			}
+		}
+
+		dfs(0, 0, new Node[cctv.size()]);
+		System.out.println(result);
+	}
+
+	static void check(Node[] arr) {
+		int cnt = 0;
+		for (int i = 0; i < arr.length; i++) {
+			Node node = arr[i];
+			int[] temp = dir[node.type][node.loc];
+			for (int k = 0; k < 4; k++) {
+
+				if (temp[k] == 1) {
+					int x = node.x + dx[k];
+					int y = node.y + dy[k];
+
+					while (x >= 0 && y >= 0 && x < N && y < M && map[x][y] != 6) {
+						if (map[x][y] == 0) {
+							map[x][y] = -1;
+						}
+
+						x = x + dx[k];
+						y = y + dy[k];
+					}
+				}
+			}
+		}
+
+		//print();
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				if (map[i][j] == 0)
+					cnt++;
+			}
+		}
+
+		if (result > cnt)
+			result = cnt;
+	}
+
+	static void print() {
+		for (int x = 0; x < N; x++) {
+			for (int y = 0; y < M; y++) {
+				System.out.print(map[x][y] + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
+
+	static void dfs(int idx, int i, Node[] arr) {
+		if (idx == cctv.size()) {
+			for (int x = 0; x < N; x++) {
+				for (int y = 0; y < M; y++) {
+					map[x][y] = tempmap[x][y];
+				}
+			}
+
+			check(arr);
+		} else if (i < cctv.size()) {
+			for (int k = 0; k < 4; k++) {
+				Node temp = cctv.get(i);
+				arr[idx] = new Node(temp.x, temp.y, temp.type, k);
+				dfs(idx + 1, i + 1, arr);
+				dfs(idx, i + 1, arr);
+			}
+		}
+	}
+}
+
+class Node {
+	int x;
+	int y;
+	int type;
+	int loc;
+
+	Node(int x, int y, int type) {
+		this.x = x;
+		this.y = y;
+		this.type = type;
+	}
+
+	Node(int x, int y, int type, int loc) {
+		this.x = x;
+		this.y = y;
+		this.type = type;
+		this.loc = loc;
+	}
+}
