@@ -14,7 +14,6 @@ class Main {
 	static int[][] map;
 	static int[][] tempmap;
 	static ArrayList<Node> cctv;
-	static int cctvCnt;
 	static int[] dx = { -1, 0, 1, 0 };
 	static int[] dy = { 0, 1, 0, -1 };
 	// 북 동 남 서.
