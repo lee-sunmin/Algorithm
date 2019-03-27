@@ -1,0 +1,110 @@
+bfs (*)
+
+유사한 문제 유형 : 말이 되고픈 원숭이
+
+처음에는, 조합+bfs 인 줄 알았는데 굉장히 많은 시간이 걸렸음.
+앞으로 위와 같은 유형에서는 visit배열의 차원을 하나 늘려줌으로써 (3차원)
+해결 가능하다는 것을 알았음.
+
+
+==========================
+
+
+import java.util.*;
+
+class Main {
+	private static Scanner scan;
+	static int N;
+	static int M;
+	static int K;
+	static int[][] map;
+	static int[][] tempmap;
+	static boolean[][][] visit;
+	static ArrayList<Node> block;
+	static int[] dx = { -1, 0, 1, 0 };
+	static int[] dy = { 0, 1, 0, -1 };
+	static int result;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		N = scan.nextInt();
+		M = scan.nextInt();
+		K = scan.nextInt();
+		map = new int[N][M];
+		tempmap = new int[N][M];
+		visit = new boolean[N][M][K + 1];
+		block = new ArrayList<Node>();
+		result = Integer.MAX_VALUE;
+
+		for (int i = 0; i < N; i++) {
+			String line = scan.next();
+			for (int j = 0; j < line.length(); j++) {
+				map[i][j] = (int) line.charAt(j) - 48;
+				tempmap[i][j] = map[i][j];
+
+				if (map[i][j] == 1) {
+					block.add(new Node(i, j, K));
+				}
+			}
+		}
+
+		bfs();
+
+		if (result == Integer.MAX_VALUE)
+			result = -1;
+
+		System.out.println(result);
+	}
+
+	static void bfs() {
+		int cnt = 0;
+
+		Queue<Node> q = new LinkedList<Node>();
+		q.add(new Node(0, 0, K));
+		visit[0][0][K] = true;
+
+		while (!q.isEmpty()) {
+			int size = q.size();
+			cnt++;
+
+			while (size > 0) {
+				Node temp = q.poll();
+
+				if (temp.x == N - 1 && temp.y == M - 1) {
+					if (result > cnt) {
+						result = cnt;
+						return;
+					}
+				}
+
+				for (int t = 0; t < 4; t++) {
+					int x = temp.x + dx[t];
+					int y = temp.y + dy[t];
+					int k = temp.k;
+					if (x >= 0 && y >= 0 && x < N && y < M && !visit[x][y][k]) {
+						if (map[x][y] == 0) {
+							visit[x][y][k] = true;
+							q.add(new Node(x, y, k));
+						} else if (map[x][y] == 1 && k > 0) {
+							visit[x][y][k] = true;
+							q.add(new Node(x, y, k - 1));
+						}
+					}
+				}
+				size--;
+			}
+		}
+	}
+}
+
+class Node {
+	int x;
+	int y;
+	int k;
+
+	Node(int x, int y, int k) {
+		this.x = x;
+		this.y = y;
+		this.k = k;
+	}
+}
