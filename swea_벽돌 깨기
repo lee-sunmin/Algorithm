@@ -1,0 +1,153 @@
+중복조합 + 시뮬레이션
+
+
+========================================
+
+
+import java.util.*;
+
+public class Main {
+	static Scanner scan;
+	static int result;
+	static int T;
+	static int N;
+	static int W;
+	static int H;
+
+	static int[] dx = { -1, 1, 0, 0 };
+	static int[] dy = { 0, 0, -1, 1 };
+
+	static int[][] map;
+	static int[][] tempmap;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		T = scan.nextInt();
+
+		for (int t = 0; t < T; t++) {
+			N = scan.nextInt();
+			W = scan.nextInt();
+			H = scan.nextInt();
+
+			map = new int[H][W];
+			tempmap = new int[H][W];
+			result = Integer.MAX_VALUE;
+
+			for (int i = 0; i < H; i++) {
+				for (int j = 0; j < W; j++) {
+					map[i][j] = scan.nextInt();
+					tempmap[i][j] = map[i][j];
+				}
+			}
+
+			dfs(0, 0, new int[N], N);
+			System.out.println("#" + (t + 1) + " " + result);
+		}
+	}
+
+	static void run(int[] arr) {
+		Queue<Node> q = new LinkedList<Node>();
+
+		for (int i = 0; i < arr.length; i++) {
+			int loc = arr[i];
+			int rx = -1;
+			for (int x = 0; x < H; x++) {
+				if (map[x][loc] != 0) {
+					rx = x;
+					break;
+				}
+			}
+
+			if (rx != -1) {
+				q.add(new Node(rx, loc));
+			}
+
+			while (!q.isEmpty()) {
+				Node node = q.poll();
+
+				if (map[node.x][node.y] == 0) {
+
+				} else if (map[node.x][node.y] == 1) {
+					map[node.x][node.y] = 0;
+				} else if (map[node.x][node.y] > 1) {
+					for (int k = 0; k < 4; k++) {
+						int x = node.x;
+						int y = node.y;
+
+						for (int idx = 0; idx < map[node.x][node.y] - 1; idx++) {
+							x = x + dx[k];
+							y = y + dy[k];
+
+							if (x >= 0 && y >= 0 && x < H && y < W) {
+								if (map[x][y] == 0) {
+
+								} else if (map[x][y] == 1) {
+									map[x][y] = 0;
+								} else if (map[x][y] > 1) {
+									q.add(new Node(x, y));
+								}
+							}
+						}
+					}
+					map[node.x][node.y] = 0;
+				}
+			}
+			// 땅으로 끌어당기기.
+			down();
+		}
+
+	}
+
+	static void down() {
+		for (int i = H - 2; i >= 0; i--) {
+			for (int j = 0; j < W; j++) {
+				if (map[i][j] != 0) {
+					int x = i + 1;
+					while (x < H && map[x][j] == 0) {
+						x++;
+					}
+					x--;
+					if (x != i) {
+						map[x][j] = map[i][j];
+						map[i][j] = 0;
+					}
+				}
+			}
+		}
+	}
+
+	static void dfs(int idx, int val, int[] arr, int cnt) {
+		if (cnt == 0) {
+			run(arr);
+			int res = 0;
+			for (int i = 0; i < H; i++) {
+				for (int j = 0; j < W; j++) {
+					if (map[i][j] != 0) {
+						res++;
+					}
+					map[i][j] = tempmap[i][j];
+				}
+			}
+
+			if (res < result)
+				result = res;
+
+		} else if (idx < N) {
+			for (int i = 0; i < W; i++) {
+				arr[idx] = i;
+				dfs(idx + 1, i, arr, cnt - 1);
+				dfs(idx + 1, i + 1, arr, cnt);
+			}
+		}
+	}
+}
+
+class Node {
+	int x;
+	int y;
+
+	Node(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+}
