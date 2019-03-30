@@ -1,0 +1,265 @@
+bfs
+
+포인트 : 중복 체크를 할 때, Hash map을 사용하면 통과
+LinkedList를 사용하면 시간초과.
+
+A에 1개 이상의 원판이 있을 때, a->b a->c
+이렇게 6개의 case를 모두 Queue에 넣고 돌린다.
+
+
+=====================================================
+
+import java.util.*;
+
+public class Main {
+	static Scanner scan;
+	static int[] size;
+	static String line;
+	static int result;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+		size = new int[4];
+		result = 0;
+		line = "";
+		for (int i = 1; i <= 3; i++) {
+			size[i] = scan.nextInt();
+			line += i;
+			if (size[i] == 0) {
+				continue;
+			}
+			line += scan.next();
+		}
+
+		String[] blocks = makeSeparate(line);
+
+		if (!check(blocks)) {
+			bfs();
+		}
+
+		System.out.println(result);
+	}
+
+	static String[] makeSeparate(String line) {
+
+		String[] blocks = new String[4];
+
+		int cnt = 0;
+		for (int i = 0; i < line.length(); i++) {
+			char a = line.charAt(i);
+			if (a >= '0' && a <= '9') {
+				cnt++;
+			} else {
+				if (blocks[cnt] == null) {
+					blocks[cnt] = a + "";
+				} else {
+					blocks[cnt] += a;
+				}
+			}
+		}
+		return blocks;
+	}
+
+	static String makeLine(String[] blocks) {
+		String line = "";
+
+		for (int i = 1; i < 4; i++) {
+			line += i;
+			if (blocks[i] != null)
+				line += blocks[i];
+		}
+
+		return line;
+	}
+
+	static boolean check(String[] blocks) {
+
+		for (int i = 1; i < 4; i++) {
+			if (blocks[i] == null)
+				continue;
+			for (int j = 0; j < blocks[i].length(); j++) {
+				if (i == 1) {
+					if (blocks[i].charAt(j) != 'A')
+						return false;
+				} else if (i == 2) {
+					if (blocks[i].charAt(j) != 'B')
+						return false;
+				} else if (i == 3) {
+					if (blocks[i].charAt(j) != 'C')
+						return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	static void bfs() {
+		Queue<String> q = new LinkedList<String>();
+		HashMap<String, String> visit = new HashMap<String, String>();
+
+		q.add(line);
+		// visit.add(line);
+		visit.put(line, "");
+
+		while (!q.isEmpty()) {
+			int size = q.size();
+			result++;
+
+			while (size > 0) {
+				String sline = q.poll();
+				String[] blocks = makeSeparate(sline);
+
+				if (blocks[1] != null && blocks[1].length() > 0) {
+					// a->b
+					String[] newblocks = new String[4];
+					for (int i = 1; i < 4; i++) {
+						if (blocks[i] == null)
+							newblocks[i] = "";
+						else
+							newblocks[i] = blocks[i];
+					}
+
+					char t = newblocks[1].charAt(newblocks[1].length() - 1);
+					newblocks[1] = newblocks[1].substring(0, newblocks[1].length() - 1);
+					newblocks[2] += t;
+
+					if (check(newblocks)) {
+						return;
+					}
+
+					String line = makeLine(newblocks);
+
+					if (!visit.containsKey(line)) {
+						q.add(line);
+						visit.put(line, "");
+					}
+
+					// a->c
+					newblocks = new String[4];
+					for (int i = 1; i < 4; i++) {
+						if (blocks[i] == null)
+							newblocks[i] = "";
+						else
+							newblocks[i] = blocks[i];
+					}
+
+					t = newblocks[1].charAt(newblocks[1].length() - 1);
+					newblocks[1] = newblocks[1].substring(0, newblocks[1].length() - 1);
+					newblocks[3] += t;
+
+					if (check(newblocks)) {
+						return;
+					}
+
+					line = makeLine(newblocks);
+
+					if (!visit.containsKey(line)) {
+						q.add(line);
+						visit.put(line, "");
+					}
+				}
+
+				if (blocks[2] != null && blocks[2].length() > 0) {
+					// b->a
+					String[] newblocks = new String[4];
+					for (int i = 1; i < 4; i++) {
+						if (blocks[i] == null)
+							newblocks[i] = "";
+						else
+							newblocks[i] = blocks[i];
+					}
+
+					char t = newblocks[2].charAt(newblocks[2].length() - 1);
+					newblocks[2] = newblocks[2].substring(0, newblocks[2].length() - 1);
+					newblocks[1] += t;
+
+					if (check(newblocks)) {
+						return;
+					}
+
+					String line = makeLine(newblocks);
+
+					if (!visit.containsKey(line)) {
+						q.add(line);
+						visit.put(line, "");
+					}
+
+					// b->c
+					newblocks = new String[4];
+					for (int i = 1; i < 4; i++) {
+						if (blocks[i] == null)
+							newblocks[i] = "";
+						else
+							newblocks[i] = blocks[i];
+					}
+
+					t = newblocks[2].charAt(newblocks[2].length() - 1);
+					newblocks[2] = newblocks[2].substring(0, newblocks[2].length() - 1);
+					newblocks[3] += t;
+
+					if (check(newblocks)) {
+						return;
+					}
+
+					line = makeLine(newblocks);
+
+					if (!visit.containsKey(line)) {
+						q.add(line);
+						visit.put(line, "");
+					}
+				}
+
+				if (blocks[3] != null && blocks[3].length() > 0) {
+					// c->a
+					String[] newblocks = new String[4];
+					for (int i = 1; i < 4; i++) {
+						if (blocks[i] == null)
+							newblocks[i] = "";
+						else
+							newblocks[i] = blocks[i];
+					}
+
+					char t = newblocks[3].charAt(newblocks[3].length() - 1);
+					newblocks[3] = newblocks[3].substring(0, newblocks[3].length() - 1);
+					newblocks[1] += t;
+
+					if (check(newblocks)) {
+						return;
+					}
+
+					String line = makeLine(newblocks);
+
+					if (!visit.containsKey(line)) {
+						q.add(line);
+						visit.put(line, "");
+					}
+
+					// c->b
+					newblocks = new String[4];
+					for (int i = 1; i < 4; i++) {
+						if (blocks[i] == null)
+							newblocks[i] = "";
+						else
+							newblocks[i] = blocks[i];
+					}
+
+					t = newblocks[3].charAt(newblocks[3].length() - 1);
+					newblocks[3] = newblocks[3].substring(0, newblocks[3].length() - 1);
+					newblocks[2] += t;
+
+					if (check(newblocks)) {
+						return;
+					}
+
+					line = makeLine(newblocks);
+
+					if (!visit.containsKey(line)) {
+						q.add(line);
+						visit.put(line, "");
+					}
+				}
+				size--;
+			}
+		}
+	}
+}
