@@ -1,0 +1,120 @@
+시뮬레이션
+
+주사위가 굴러갈 때, 전개도가 바뀌는 데에 규칙이 있다는 것을 알면 쉽게 풀 수 있음.
+힌트 받아서 풀었음. :(
+
+===============================
+
+import java.util.*;
+
+public class Main {
+	static Scanner scan;
+	static int result;
+
+	static int N;
+	static int M;
+	static int X;
+	static int Y;
+	static int K;
+	static Node start;
+	static int[] blocks = { 0, 1, 2, 3, 4, 5, 6 };
+	static int[] temp = { 0, 1, 2, 3, 4, 5, 6 };
+	static int[] bValue;
+	static int[] down = { 0, 6, 5, 4, 3, 2, 1 };
+	static int[] dx = { 0, 0, 0, -1, 1 };
+	static int[] dy = { 0, 1, -1, 0, 0 };
+
+	static int[][] map;
+
+	public static void main(String[] args) {
+		scan = new Scanner(System.in);
+
+		N = scan.nextInt();
+		M = scan.nextInt();
+		X = scan.nextInt();
+		Y = scan.nextInt();
+		K = scan.nextInt();
+
+		map = new int[N][M];
+
+		bValue = new int[7];
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				map[i][j] = scan.nextInt();
+			}
+		}
+
+		// type : 0이 기본.
+		start = new Node(X, Y);
+
+		for (int i = 0; i < K; i++) {
+			int k = scan.nextInt();
+			run(k);
+		}
+	}
+
+	static void run(int k) {
+
+		int x = start.x + dx[k];
+		int y = start.y + dy[k];
+
+		if (x >= 0 && y >= 0 && x < N && y < M) {
+			// 동쪽은 1, 서쪽은 2, 북쪽은 3, 남쪽은 4
+			switch (k) {
+			case 1:
+				blocks[1] = temp[3];
+				blocks[3] = temp[6];
+				blocks[6] = temp[4];
+				blocks[4] = temp[1];
+				break;
+			case 2:
+				blocks[1] = temp[4];
+				blocks[3] = temp[1];
+				blocks[6] = temp[3];
+				blocks[4] = temp[6];
+				break;
+			case 3:
+				blocks[1] = temp[2];
+				blocks[2] = temp[6];
+				blocks[5] = temp[1];
+				blocks[6] = temp[5];
+				break;
+			case 4:
+				blocks[1] = temp[5];
+				blocks[2] = temp[1];
+				blocks[5] = temp[6];
+				blocks[6] = temp[2];
+				break;
+			}
+
+			for (int i = 1; i <= 6; i++) {
+				temp[i] = blocks[i];
+			}
+
+			int val = bValue[down[blocks[1]]];
+
+			if (map[x][y] == 0) {
+				map[x][y] = val;
+			} else {
+				bValue[down[blocks[1]]] = map[x][y];
+				map[x][y] = 0;
+			}
+			start = new Node(x, y);
+			System.out.println(bValue[blocks[1]]);
+		} else {
+			// 무시.
+		}
+
+	}
+}
+
+class Node {
+	int x;
+	int y;
+
+	Node(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+}
