@@ -1,0 +1,84 @@
+간단한 bfs + (약간의 시뮬) 문제
+
+
+=========
+
+
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+
+public class Main {
+
+	static int[][] dx = { { 0, 1 }, { 1, 1 }, { 0, 1, 1 } };
+	static int[][] dy = { { 1, 1 }, { 0, 1 }, { 1, 0, 1 } };
+	static int[][] state = { { 0, 2 }, { 1, 2 }, { 0, 1, 2 } };
+	static int[][] map;
+	static int N;
+	static int result;
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		N = scan.nextInt();
+		map = new int[N][N];
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				map[i][j] = scan.nextInt();
+			}
+		}
+
+		run();
+
+		System.out.println(result);
+	}
+
+	static void run() {
+		Queue<Node> q = new LinkedList<Node>();
+
+		q.add(new Node(0, 0, 0, 1, 0));
+
+		while (!q.isEmpty()) {
+			Node temp = q.poll();
+
+			for (int i = 0; i < dx[temp.state].length; i++) {
+				int x = temp.ex + dx[temp.state][i];
+				int y = temp.ey + dy[temp.state][i];
+
+				if (x >= 0 && y >= 0 && x < N && y < N && map[x][y] == 0) {
+					if (state[temp.state][i] == 2) {
+						if (map[x - 1][y] == 0 && map[x][y - 1] == 0) {
+
+						} else {
+							continue;
+						}
+					}
+
+					if (x == N - 1 && y == N - 1) {
+						result++;
+						continue;
+					}
+
+					q.add(new Node(temp.ex, temp.ey, x, y, state[temp.state][i]));
+
+				}
+			}
+		}
+	}
+}
+
+class Node {
+	int sx;
+	int sy;
+	int ex;
+	int ey;
+	int state;
+
+	Node(int sx, int sy, int ex, int ey, int state) {
+		this.sx = sx;
+		this.sy = sy;
+		this.ex = ex;
+		this.ey = ey;
+		this.state = state;
+	}
+}
