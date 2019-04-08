@@ -1,0 +1,86 @@
+파이프 옮기기 1의 심화 문제.
+파이프 옮기기 1이 간단한 BFS였다면,
+
+해당 문제는 범위가 넓어지고 시간 제약이 짧아져서 절대 불가능!
+
+*DP를 사용해야 한다.* -> 3차원 배열이 포인트
+알고보면 간단한데 DP를 잘 몰라서.. 다른 사이트 참고해서 풀었음. :(
+
+
+============
+
+import java.util.Scanner;
+
+public class Main {
+	static Long[][][] pipe;
+	static int[][] map;
+	static int N;
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		N = scan.nextInt();
+
+		map = new int[N][N];
+		pipe = new Long[N][N][3];
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				map[i][j] = scan.nextInt();
+				pipe[i][j][0] = 0L;
+				pipe[i][j][1] = 0L;
+				pipe[i][j][2] = 0L;
+			}
+		}
+
+		pipe[0][1][0] = 1L;
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				if (pipe[i][j][0] != 0) {
+					zero(i, j, 0);
+					two(i, j, 0);
+				}
+				if (pipe[i][j][1] != 0) {
+					one(i, j, 1);
+					two(i, j, 1);
+				}
+				if (pipe[i][j][2] != 0) {
+					zero(i, j, 2);
+					one(i, j, 2);
+					two(i, j, 2);
+				}
+			}
+		}
+		Long result = (pipe[N - 1][N - 1][0] + pipe[N - 1][N - 1][1] + pipe[N - 1][N - 1][2]);
+		System.out.println(result);
+	}
+
+	static void zero(int i, int j, int state) {
+		int x = i;
+		int y = j + 1;
+
+		if (x >= 0 && y >= 0 && x < N && y < N && map[x][y] != 1) {
+			pipe[x][y][0] += pipe[i][j][state];
+		}
+	}
+
+	static void one(int i, int j, int state) {
+		int x = i + 1;
+		int y = j;
+
+		if (x >= 0 && y >= 0 && x < N && y < N && map[x][y] != 1) {
+			pipe[x][y][1] += pipe[i][j][state];
+		}
+	}
+
+	static void two(int i, int j, int state) {
+		int x = i + 1;
+		int y = j + 1;
+
+		if (x >= 0 && y >= 0 && x < N && y < N && map[x][y] != 1) {
+			if (map[x - 1][y] != 1 && map[x][y - 1] != 1) {
+				pipe[x][y][2] += pipe[i][j][state];
+			}
+		}
+	}
+}
