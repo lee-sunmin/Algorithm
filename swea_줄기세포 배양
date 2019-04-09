@@ -1,0 +1,123 @@
+
+시뮬레이션
+
+* 포인트 : 같은 위치에 데이터를 생성하려고 할 때, 더 큰 값이 올 수 있도록 해야한다. < < 조건 잘 체크
+
+배열을 1000으로 잡아줬는데.. 범위가 굉장히 크게 잡혀서 어쩔 수 없었음. :(
+그런데 너무 오버해서 크게 잡으면 런타임 에러 발생하니까 주의.
+
+=================
+
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+
+public class Main {
+	static Node[][] map;
+	static int N;
+	static int M;
+	static int K;
+	static int T;
+	static int[] dx = { -1, 1, 0, 0 };
+	static int[] dy = { 0, 0, -1, 1 };
+	static Node start;
+	static Queue<Node> alive;
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+
+		T = scan.nextInt();
+
+		for (int t = 0; t < T; t++) {
+			N = scan.nextInt();
+			M = scan.nextInt();
+			K = scan.nextInt();
+
+			map = new Node[1000][1000];
+			alive = new LinkedList<Node>();
+
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < M; j++) {
+					int p = scan.nextInt();
+					if (p >= 1) {
+						map[500 + i][500 + j] = new Node(500 + i, 500 + j, p, 0, 0);
+						alive.add(map[500 + i][500 + j]);
+					}
+				}
+			}
+			run();
+
+			System.out.println("#" + (t + 1) + " " + alive.size());
+		}
+	}
+
+	static void run() {
+		for (int k = 1; k <= K; k++) {
+			int size = alive.size();
+
+			while (size > 0) {
+				Node temp = alive.poll();
+
+				if (temp.state == 0) {
+					temp.power--;
+					temp.k = k;
+					if (temp.power == 0) {
+						temp.state = 1;
+						temp.power = temp.oriPower;
+					}
+					alive.add(temp);
+				} else if (temp.state == 1) {
+					temp.k = k;
+					if (temp.power == temp.oriPower) {
+						make(temp, k);
+					}
+					temp.power--;
+
+					if (temp.power == 0) {
+						temp.state = 2;
+					} else {
+						alive.add(temp);
+					}
+				}
+				size--;
+			}
+		}
+	}
+
+	static void make(Node temp, int k) {
+		// 활성상태 첫번째일때만 하는 짓.
+		for (int dk = 0; dk < 4; dk++) {
+			int x = temp.x + dx[dk];
+			int y = temp.y + dy[dk];
+
+			if (map[x][y] == null) {
+				// 뒤에 차지하는애가 더 크면 점령 가능하게 해야 함.
+				map[x][y] = new Node(x, y, temp.oriPower, 0, k);
+				alive.add(map[x][y]);
+			} else if (map[x][y].state == 0 && map[x][y].k == k && map[x][y].power == map[x][y].oriPower) {
+				if (map[x][y].oriPower < temp.oriPower) {
+					map[x][y].oriPower = temp.oriPower;
+					map[x][y].power = temp.oriPower;
+				}
+			}
+		}
+	}
+}
+
+class Node {
+	int x;
+	int y;
+	int power;
+	int state;
+	int k;
+	int oriPower;
+
+	Node(int x, int y, int power, int state, int k) {
+		this.x = x;
+		this.y = y;
+		this.oriPower = power;
+		this.power = power;
+		this.state = state;
+		this.k = k;
+	}
+}
