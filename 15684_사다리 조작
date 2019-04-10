@@ -76,3 +76,93 @@ public class Main {
 		return true;
 	}
 }
+
+
+==================
+
+이해하고 다시 풀어봤음.
+
+시간, 메모리 줄었다 =)
+
+import java.util.*;
+
+public class Main {
+	static int[][] map;
+	static int N;
+	static int M;
+	static int H;
+	static boolean res;
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		N = scan.nextInt();
+		M = scan.nextInt();
+		H = scan.nextInt();
+
+		map = new int[H + 1][N + 1];
+
+		for (int i = 0; i < M; i++) {
+			int s = scan.nextInt();
+			int e = scan.nextInt();
+			map[s][e] = e + 1;
+			map[s][e + 1] = e;
+		}
+
+		if (check()) {
+			System.out.println(0);
+			return;
+		}
+
+		for (int k = 0; k <= 3; k++) {
+			dfs(1, 1, k);
+			if (res) {
+				System.out.println(k);
+				return;
+			}
+		}
+
+		System.out.println(-1);
+	}
+
+	public static void dfs(int x, int y, int cnt) {
+		if (res)
+			return;
+
+		if (cnt > 0) {
+			for (int i = x; i <= H; i++) {
+				for (int j = y; j < N; j++) {
+					if (map[i][j] == 0 && map[i][j + 1] == 0) {
+						map[i][j] = j + 1;
+						map[i][j + 1] = j;
+
+						dfs(i, j + 1, cnt - 1);
+
+						map[i][j] = 0;
+						map[i][j + 1] = 0;
+					}
+				}
+				y = 1;
+			}
+		} else if (cnt == 0) {
+			if (check()) {
+				res = true;
+				return;
+			}
+		}
+	}
+
+	public static boolean check() {
+		for (int j = 1; j <= N; j++) {
+			int start = j;
+			for (int i = 1; i <= H; i++) {
+				if (map[i][start] != 0) {
+					start = map[i][start];
+				}
+			}
+			if (start != j) {
+				return false;
+			}
+		}
+		return true;
+	}
+}
