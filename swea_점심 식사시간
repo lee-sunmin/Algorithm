@@ -186,3 +186,160 @@ class Node {
 		this.length = length;
 	}
 }
+
+
+== 
+
+
+다시 풀어보니까 속도 조금 개선됨 :)
+
+public class Main {
+	static int T;
+	static int N;
+	static int map[][];
+
+	static Node A;
+	static Node B;
+	static ArrayList<Node> people;
+	static int result;
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		T = scan.nextInt();
+
+		for (int t = 0; t < T; t++) {
+			N = scan.nextInt();
+			map = new int[N][N];
+
+			A = null;
+			B = null;
+
+			people = new ArrayList<Node>();
+			result = Integer.MAX_VALUE;
+
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					map[i][j] = scan.nextInt();
+
+					if (map[i][j] == 1) {
+						people.add(new Node(i, j));
+					} else if (map[i][j] >= 2) {
+						if (A == null) {
+							A = new Node(i, j, map[i][j]);
+						} else {
+							B = new Node(i, j, map[i][j]);
+						}
+					}
+				}
+			}
+
+			for (int i = 0; i <= people.size(); i++) {
+				dfs(0, new boolean[people.size()], i);
+			}
+
+			System.out.println("#" + (t + 1) + " " + result);
+		}
+	}
+
+	static void run(boolean[] arr) {
+		ArrayList<Node> waitA = new ArrayList<Node>();
+		ArrayList<Node> waitB = new ArrayList<Node>();
+
+		ArrayList<Node> runA = new ArrayList<Node>();
+		ArrayList<Node> runB = new ArrayList<Node>();
+
+		for (int i = 0; i < arr.length; i++) {
+			Node temp = people.get(i);
+			if (arr[i]) {
+				// true - A
+				int dist = Math.abs(A.x - temp.x) + Math.abs(A.y - temp.y) + 1;
+				waitA.add(new Node(temp.x, temp.y, dist));
+			} else {
+				// false - B
+				int dist = Math.abs(B.x - temp.x) + Math.abs(B.y - temp.y) + 1;
+				waitB.add(new Node(temp.x, temp.y, dist));
+			}
+		}
+
+		int cnt = 0;
+
+		while (!waitA.isEmpty() || !waitB.isEmpty() || !runA.isEmpty() || !runB.isEmpty()) {
+
+			Iterator<Node> iter = runA.iterator();
+			while (iter.hasNext()) {
+				Node temp = iter.next();
+				temp.dist--;
+				if (temp.dist <= 0) {
+					iter.remove();
+				}
+			}
+
+			iter = runB.iterator();
+			while (iter.hasNext()) {
+				Node temp = iter.next();
+				temp.dist--;
+				if (temp.dist <= 0) {
+					iter.remove();
+				}
+			}
+
+			iter = waitA.iterator();
+			while (iter.hasNext()) {
+				Node temp = iter.next();
+				temp.dist--;
+
+				if (temp.dist <= 0) {
+					if (runA.size() < 3) {
+						iter.remove();
+						runA.add(new Node(temp.x, temp.y, A.dist));
+					}
+				}
+			}
+
+			iter = waitB.iterator();
+			while (iter.hasNext()) {
+				Node temp = iter.next();
+				temp.dist--;
+
+				if (temp.dist <= 0) {
+					if (runB.size() < 3) {
+						iter.remove();
+						runB.add(new Node(temp.x, temp.y, B.dist));
+					}
+				}
+			}
+			cnt++;
+		}
+
+		if (cnt < result)
+			result = cnt;
+	}
+
+	static void dfs(int idx, boolean[] arr, int cnt) {
+		if (cnt == 0) {
+			run(arr);
+		} else if (idx < arr.length) {
+			arr[idx] = true;
+			dfs(idx + 1, arr, cnt - 1);
+			arr[idx] = false;
+			dfs(idx + 1, arr, cnt);
+		}
+	}
+}
+
+class Node {
+	int x;
+	int y;
+	int dist;
+
+	Node(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	Node(int x, int y, int dist) {
+		this.x = x;
+		this.y = y;
+		this.dist = dist;
+	}
+}
