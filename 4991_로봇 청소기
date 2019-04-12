@@ -1,0 +1,171 @@
+bfs, dfs 사용
+저장하는게 포인트 ! -> 저장 안하면 시간초과.
+
+
+===================
+
+import java.util.*;
+
+public class Main {
+	static int N;
+	static int M;
+	static int[][] map;
+	static ArrayList<Node> dust;
+	static Node cleaner;
+	static int[][] dist;
+	static int[] mdist;
+	static int[] dx = { -1, 1, 0, 0 };
+	static int[] dy = { 0, 0, -1, 1 };
+	static boolean[][] visit;
+	static int result;
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		M = scan.nextInt();
+		N = scan.nextInt();
+
+		while (M != 0 && N != 0) {
+			map = new int[N][M];
+			dust = new ArrayList<Node>();
+			result = Integer.MAX_VALUE;
+
+			int idx = 1;
+			scan.nextLine();
+			for (int i = 0; i < N; i++) {
+				String line = scan.nextLine();
+				for (int j = 0; j < line.length(); j++) {
+					char a = line.charAt(j);
+					if (a == '*') {
+						map[i][j] = idx;
+						dust.add(new Node(i, j, idx));
+						idx++;
+					} else if (a == 'o') {
+						cleaner = new Node(i, j, -1);
+					} else if (a == 'x') {
+						map[i][j] = -2;
+					}
+				}
+			}
+
+			if (dust.size() == 0) {
+				System.out.println(0);
+			} else {
+				dist = new int[dust.size()][dust.size()];
+				mdist = new int[dust.size()];
+
+				calc_dist();
+
+				dfs(new boolean[dust.size() + 1], new int[dust.size()], 0, dust.size());
+
+				if (result == Integer.MAX_VALUE)
+					System.out.println(-1);
+				else
+					System.out.println(result);
+			}
+
+			M = scan.nextInt();
+			N = scan.nextInt();
+		}
+	}
+
+	static void calc_dist() {
+		for (int i = 0; i < dust.size(); i++) {
+			for (int j = i + 1; j < dust.size(); j++) {
+				int res = bfs(dust.get(i), dust.get(j));
+				dist[i][j] = res;
+				dist[j][i] = res;
+			}
+		}
+
+		for (int i = 0; i < dust.size(); i++) {
+			mdist[i] = bfs(cleaner, dust.get(i));
+		}
+	}
+
+	static int bfs(Node start, Node end) {
+		visit = null;
+		visit = new boolean[N][M];
+
+		Queue<Node> q = new LinkedList<Node>();
+		q.add(start);
+
+		int cnt = 0;
+
+		while (!q.isEmpty()) {
+
+			int size = q.size();
+			cnt++;
+
+			while (size > 0) {
+				Node node = q.poll();
+
+				for (int k = 0; k < 4; k++) {
+					int x = node.x + dx[k];
+					int y = node.y + dy[k];
+
+					if (x >= 0 && y >= 0 && x < N && y < M && map[x][y] != -2 && !visit[x][y]) {
+						if (map[x][y] == end.idx) {
+							return cnt;
+						}
+						visit[x][y] = true;
+						q.add(new Node(x, y));
+
+					}
+				}
+				size--;
+			}
+		}
+		return -1;
+	}
+
+	static void run(int[] arr) {
+		int res = 0;
+
+		int val = mdist[arr[0]];
+		if (val == -1) {
+			return;
+		}
+		res = val;
+
+		for (int i = 0; i < arr.length - 1; i++) {
+			val = dist[arr[i]][arr[i + 1]];
+			if (val == -1)
+				return;
+			res += val;
+		}
+		if (result > res)
+			result = res;
+	}
+
+	static void dfs(boolean[] visit, int[] arr, int idx, int cnt) {
+		if (cnt == 0) {
+			run(arr);
+		} else {
+			for (int i = 0; i < dust.size(); i++) {
+				if (!visit[i]) {
+					visit[i] = true;
+					arr[idx] = i;
+					dfs(visit, arr, idx + 1, cnt - 1);
+					visit[i] = false;
+				}
+			}
+		}
+	}
+}
+
+class Node {
+	int x;
+	int y;
+	int idx;
+
+	Node(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	Node(int x, int y, int idx) {
+		this.x = x;
+		this.y = y;
+		this.idx = idx;
+	}
+}
