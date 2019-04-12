@@ -1,0 +1,85 @@
+규칙이 있는 시뮬레이션.
+
+세대가 증가할 때마다 방향 값의 변화에 규칙이 있다는 것을 발견해야 한다. ㅠ ㅠ
+
+=======================
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Main {
+	static int N;
+	static int[][] map;
+	static int[] dx = { 0, -1, 0, 1 };
+	static int[] dy = { 1, 0, -1, 0 };
+	static int x;
+	static int y;
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		N = scan.nextInt();
+		map = new int[101][101];
+
+		for (int n = 0; n < N; n++) {
+			y = scan.nextInt();
+			x = scan.nextInt();
+			int d = scan.nextInt();
+			int g = scan.nextInt();
+			map[x][y] = 1;
+			run(d, g);
+		}
+		System.out.println(check());
+	}
+
+	static int check() {
+		int res = 0;
+		for (int i = 0; i <= 100; i++) {
+			for (int j = 0; j <= 100; j++) {
+				if (map[i][j] == 1 && j + 1 <= 100 && i + 1 <= 100) {
+					if (map[i + 1][j] == 1 && map[i][j + 1] == 1 && map[i + 1][j + 1] == 1) {
+						res++;
+					}
+				}
+			}
+		}
+		return res;
+	}
+
+	static void run(int d, int g) {
+		ArrayList<Integer> arr = new ArrayList<Integer>();
+		ArrayList<Integer> temparr = new ArrayList<Integer>();
+
+		arr.add(d);
+		draw(arr);
+
+		for (int i = 1; i <= g; i++) {
+			if (i == 1) {
+				temparr.add((arr.get(0) + 1) % 4);
+			} else {
+				for (int j = arr.size() - 1; j >= 0; j--) {
+					temparr.add((arr.get(j) + 1) % 4);
+				}
+
+				for (int j = 0; j < arr.size(); j++) {
+					temparr.add(arr.get(j));
+				}
+			}
+
+			draw(temparr);
+			arr.clear();
+			for (int k = 0; k < temparr.size(); k++) {
+				arr.add(temparr.get(k));
+			}
+			temparr.clear();
+		}
+	}
+
+	static void draw(ArrayList<Integer> arr) {
+		for (int i = 0; i < arr.size(); i++) {
+			int loc = arr.get(i);
+			x = x + dx[loc];
+			y = y + dy[loc];
+
+			map[x][y] = 1;
+		}
+	}
+}
