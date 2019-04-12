@@ -2,79 +2,69 @@
 메모리 초과, 시간초과
 point : 선언과 초기화는 다르다.
 
+
+변경 : 내 스타일로 다시 풀어봄 :)
 =============================
 
 import java.util.*;
 
 public class Main {
+	static int T;
+	static int N;
 	static int[][] map;
+	static ArrayList<Node> list;
+	static int result;
 	static int[] dx = { 0, 0, -1, 1 };
 	static int[] dy = { 1, -1, 0, 0 };
-	static int N;
-	static int T;
-
-	static int result;
 
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
+		map = new int[4001][4001];
+		list = new ArrayList<Node>();
 
 		T = scan.nextInt();
-		map = new int[4001][4001];
-
-		for (int t = 1; t <= T; t++) {
+		for (int t = 0; t < T; t++) {
+			list.clear();
+			N = scan.nextInt();
 			result = 0;
 
-			N = scan.nextInt();
-			LinkedList<Node> list = new LinkedList<Node>();
-
 			for (int n = 0; n < N; n++) {
-				int x = (scan.nextInt() + 1000) * 2;
-				int y = (scan.nextInt() + 1000) * 2;
-				int loc = scan.nextInt();
-				int power = scan.nextInt();
+				int x = (scan.nextInt() * 2) + 2000;
+				int y = (scan.nextInt() * 2) + 2000;
+				int dir = scan.nextInt();
+				int k = scan.nextInt();
 
-				map[x][y] = 1;
-				list.add(new Node(x, y, loc, power));
+				list.add(new Node(x, y, dir, k));
 			}
-			run(list);
-
-			System.out.println("#" + t + " " + result);
+			bfs();
+			System.out.println("#" + (t + 1) + " " + result);
 		}
 	}
 
-	static void run(LinkedList<Node> list) {
+	static void bfs() {
 		Queue<Node> q = new LinkedList<Node>();
 		q.addAll(list);
 
 		while (!q.isEmpty()) {
-			int size = q.size();
-			while (size > 0) {
-				Node temp = q.poll();
+			Node node = q.poll();
 
-				if (map[temp.x][temp.y] > 1) {
-					result += temp.power;
-					map[temp.x][temp.y] = 0;
-					size--;
-					continue;
-				}
+			if (map[node.x][node.y] > 1) {
+				result += node.k;
+				map[node.x][node.y] = 0;
+				continue;
+			}
 
-				int x = temp.x + dx[temp.loc];
-				int y = temp.y + dy[temp.loc];
+			int x = node.x + dx[node.dir];
+			int y = node.y + dy[node.dir];
+			map[node.x][node.y] = 0;
 
-				if (x >= 0 && y >= 0 && x < 4001 && y < 4001) {
-					map[temp.x][temp.y] = 0;
-					map[x][y]++;
-
-					if (map[x][y] > 1) {
-						result += temp.power;
-					} else {
-						q.add(new Node(x, y, temp.loc, temp.power));
-					}
+			if (x >= 0 && y >= 0 && x < 4001 && y < 4001) {
+				map[x][y]++;
+				if (map[x][y] > 1) {
+					result += node.k;
 				} else {
-					// 무 시.
-					map[temp.x][temp.y] = 0;
+					q.add(new Node(x, y, node.dir, node.k));
 				}
-				size--;
 			}
 		}
 	}
@@ -83,18 +73,13 @@ public class Main {
 class Node {
 	int x;
 	int y;
-	int loc;
-	int power;
+	int dir;
+	int k;
 
-	Node(int x, int y) {
+	Node(int x, int y, int dir, int k) {
 		this.x = x;
 		this.y = y;
-	}
-
-	Node(int x, int y, int loc, int power) {
-		this.x = x;
-		this.y = y;
-		this.loc = loc;
-		this.power = power;
+		this.dir = dir;
+		this.k = k;
 	}
 }
