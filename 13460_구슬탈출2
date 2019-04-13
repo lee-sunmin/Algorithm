@@ -144,3 +144,162 @@ class Node {
 		this.by = by;
 	}
 }
+
+
+
+=======
+
+혼자 다시 풀어봤음. 내스타일 코드 :)
+좌표 이동부분은 좀 지저분하지만.. :(
+
+
+import java.util.*;
+
+public class Main {
+	static int N;
+	static int M;
+	static char[][] map;
+	static boolean[][][][] visit;
+
+	static int[] dx = { -1, 1, 0, 0 };
+	static int[] dy = { 0, 0, -1, 1 };
+
+	static Node balls;
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		N = scan.nextInt();
+		M = scan.nextInt();
+		balls = new Node();
+		map = new char[N][M];
+		visit = new boolean[N][M][N][M];
+
+		scan.nextLine();
+		for (int i = 0; i < N; i++) {
+			String line = scan.nextLine();
+			for (int j = 0; j < M; j++) {
+				char a = line.charAt(j);
+				if (a == 'R') {
+					balls.rx = i;
+					balls.ry = j;
+					map[i][j] = '.';
+				} else if (a == 'B') {
+					balls.bx = i;
+					balls.by = j;
+					map[i][j] = '.';
+				} else {
+					map[i][j] = a;
+				}
+			}
+		}
+
+		System.out.println(bfs());
+	}
+
+	static int bfs() {
+		Queue<Node> q = new LinkedList<Node>();
+		q.add(balls);
+		int t = 1;
+		while (!q.isEmpty() && t <= 10) {
+			int size = q.size();
+			while (size > 0) {
+				size--;
+
+				Node node = q.poll();
+				for (int k = 0; k < 4; k++) {
+					// red먼저.
+					int rx = node.rx + dx[k];
+					int ry = node.ry + dy[k];
+
+					while (map[rx][ry] != '#') {
+						if (map[rx][ry] == 'O') {
+							rx = rx + dx[k];
+							ry = ry + dy[k];
+							break;
+						}
+						rx = rx + dx[k];
+						ry = ry + dy[k];
+					}
+					rx = rx - dx[k];
+					ry = ry - dy[k];
+
+					// blue.
+					int bx = node.bx + dx[k];
+					int by = node.by + dy[k];
+
+					while (map[bx][by] != '#') {
+						if (map[bx][by] == 'O') {
+							bx = bx + dx[k];
+							by = by + dy[k];
+							break;
+						}
+						bx = bx + dx[k];
+						by = by + dy[k];
+					}
+					bx = bx - dx[k];
+					by = by - dy[k];
+
+					// same location.
+					if (rx == bx && ry == by) {
+						if (map[rx][ry] == 'O') {
+							// fail.
+						} else {
+							// 거리계산. 위치 조정.
+							int rdist = Math.abs(node.rx - rx) + Math.abs(node.ry - ry);
+							int bdist = Math.abs(node.bx - bx) + Math.abs(node.by - by);
+
+							if (rdist > bdist) {
+								// red를 한칸 뒤로 빽..
+								rx = rx - dx[k];
+								ry = ry - dy[k];
+							} else {
+								// blue를 한칸 뒤로 빽..
+								bx = bx - dx[k];
+								by = by - dy[k];
+							}
+
+							if (!visit[rx][ry][bx][by]) {
+								visit[rx][ry][bx][by] = true;
+								q.add(new Node(rx, ry, bx, by));
+							}
+						}
+					} else {
+						if (map[rx][ry] == 'O') {
+							// success!
+							return t;
+						} else if (map[bx][by] == 'O') {
+							// false;
+						} else {
+							if (!visit[rx][ry][bx][by]) {
+								visit[rx][ry][bx][by] = true;
+								q.add(new Node(rx, ry, bx, by));
+							}
+						}
+
+					}
+				}
+			}
+			t++;
+		}
+		return -1;
+	}
+}
+
+class Node {
+	int rx;
+	int ry;
+	int bx;
+	int by;
+
+	Node() {
+
+	}
+
+	Node(int rx, int ry, int bx, int by) {
+		this.rx = rx;
+		this.ry = ry;
+		this.bx = bx;
+		this.by = by;
+	}
+
+}
