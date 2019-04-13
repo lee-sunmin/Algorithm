@@ -94,3 +94,100 @@ class Node {
 		this.y = y;
 	}
 }
+
+
+=====
+
+나름 정리해서 풀어보았음.
+
+
+import java.util.*;
+
+public class Main {
+	static LinkedList<Node> snake;
+	static int N;
+	static int K;
+	static int L;
+
+	static int[][] map;
+	static int[] arr;
+	static char[] locarr;
+	static int dir;
+
+	static int[] dx = { -1, 0, 1, 0 };
+	static int[] dy = { 0, 1, 0, -1 };
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		snake = new LinkedList<Node>();
+
+		N = scan.nextInt();
+		map = new int[N + 1][N + 1];
+
+		map[1][1] = 1;
+		snake.add(new Node(1, 1));
+		dir = 1;
+
+		K = scan.nextInt();
+		for (int k = 0; k < K; k++) {
+			int x = scan.nextInt();
+			int y = scan.nextInt();
+			map[x][y] = 2;
+		}
+		L = scan.nextInt();
+		arr = new int[L];
+		locarr = new char[L];
+		for (int l = 0; l < L; l++) {
+			arr[l] = scan.nextInt();
+			locarr[l] = scan.next().charAt(0);
+		}
+
+		System.out.println(run() + 1);
+	}
+
+	static int run() {
+		int cnt = 0;
+
+		int x = 1 + dx[dir];
+		int y = 1 + dy[dir];
+		int idx = 0;
+
+		while (x >= 1 && y >= 1 && x <= N && y <= N && map[x][y] != 1) {
+			snake.addFirst(new Node(x, y));
+
+			if (map[x][y] == 2) {
+				map[x][y] = 1;
+			} else {
+				map[x][y] = 1;
+				Node node = snake.removeLast();
+				map[node.x][node.y] = 0;
+			}
+
+			cnt++;
+
+			if (idx < arr.length && cnt == arr[idx]) {
+				if (locarr[idx] == 'L') {
+					// left 90
+					dir = (dir + 3) % 4;
+				} else {
+					dir = (dir + 1) % 4;
+				}
+				idx++;
+			}
+
+			x = x + dx[dir];
+			y = y + dy[dir];
+		}
+		return cnt;
+	}
+}
+
+class Node {
+	int x;
+	int y;
+
+	Node(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+}
