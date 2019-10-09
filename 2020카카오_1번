@@ -1,0 +1,88 @@
+import java.util.*;
+import java.util.Scanner;
+
+public class Main {
+	static int answer = 0;
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+
+		String s = scan.nextLine();
+		answer = s.length();
+		for (int i = 1; i <= (s.length() / 2); i++) {
+			ArrayList<Node> nodes = new ArrayList<>();
+
+			String base = s.substring(0, i);
+
+			nodes.add(new Node(base));
+
+			int end = 0;
+			String after = "";
+
+			for (int start = i; start < s.length(); start = start + i) {
+
+				end = start + i;
+
+				if (end > s.length()) {
+					after = s.substring(start, s.length());
+					nodes.add(new Node(after));
+					break;
+
+				} else {
+					after = s.substring(start, end);
+
+					if (base.equals(after)) {
+						nodes.get(nodes.size() - 1).addCnt();
+					} else {
+						base = after;
+						nodes.add(new Node(base));
+					}
+				}
+			}
+
+			int res = 0;
+			for (int z = 0; z < nodes.size(); z++) {
+				if (nodes.get(z).cnt >= 100) {
+					res = res + 3;
+				} else if (nodes.get(z).cnt >= 10) {
+					res = res + 2;
+				} else if (nodes.get(z).cnt > 1) {
+					res++;
+				}
+				res = res + nodes.get(z).val.length();
+			}
+
+			if (res < answer) {
+				answer = res;
+			}
+		}
+
+		System.out.println(answer);
+	}
+
+	public static void print(ArrayList<Node> nodes) {
+		for (int i = 0; i < nodes.size(); i++) {
+			System.out.println(nodes.get(i).val);
+			System.out.println(nodes.get(i).cnt);
+			System.out.println("--------------------");
+		}
+	}
+}
+
+class Node {
+	String val;
+	int cnt = 1;
+
+	Node() {
+		val = "";
+		cnt = 1;
+	}
+
+	Node(String val) {
+		this.val = val;
+	}
+
+	void addCnt() {
+		this.cnt++;
+	}
+}
