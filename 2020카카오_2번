@@ -1,0 +1,81 @@
+import java.util.*;
+import java.util.Scanner;
+
+public class Main {
+	static int answer = 0;
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+
+		String s = scan.nextLine();
+		String result = solution(s);
+		System.out.println(result);
+	}
+
+	public static String solution(String p) {
+		String answer = "";
+
+		if (isCompleted(p)) {
+			return p;
+		}
+		String u = "";
+		String v = "";
+		int front = 0;
+		for (int i = 0; i < p.length(); i++) {
+			char c = p.charAt(i);
+
+			if (c == '(') {
+				front++;
+			} else if (c == ')') {
+				front--;
+			}
+
+			if (front == 0) {
+				u = p.substring(0, i + 1);
+				v = p.substring(i + 1, p.length());
+				break;
+			}
+		}
+
+		if (isCompleted(u)) {
+			answer += u;
+			return answer + solution(v);
+		} else {
+			u = u.substring(1, u.length() - 1);
+			String nu = "";
+			String temp = "(" + solution(v) + ")";
+
+			for (int j = 0; j < u.length(); j++) {
+				if (u.charAt(j) == ')') {
+					nu += '(';
+				} else {
+					nu += ')';
+				}
+			}
+
+			answer += (temp + nu);
+			return answer;
+		}
+	}
+
+	public static boolean isCompleted(String line) {
+		int front = 0;
+
+		for (int i = 0; i < line.length(); i++) {
+			char c = line.charAt(i);
+			if (c == '(') {
+				front++;
+			} else if (c == ')') {
+				front--;
+				if (front < 0) {
+					return false;
+				}
+			}
+		}
+
+		if (front != 0)
+			return false;
+		else
+			return true;
+	}
+}
