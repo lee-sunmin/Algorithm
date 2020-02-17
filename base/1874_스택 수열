@@ -1,0 +1,62 @@
+스택 기본
+생각없이 시작하면 코드가 지저분해지거나 꼬이는 문제 ㅜㅜ
+
+시작부터 stack.peek을 쓰면 stack 내에 데이터가 없는 경우에 한해 문제가 발생한다.
+이를 막기위해 stack.isEmpty()를 사용해서 잡아주는 것도 굉장히 번거로운 일이다.
+
+따라서 m 이라는 값을 사용해서 판단하는 것이 중요함 !! 
+
+==================================
+
+import java.util.Scanner;
+import java.util.Stack;
+
+public class Main {
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+
+		int size = scan.nextInt();
+		Stack<Integer> stack = new Stack<Integer>();
+		StringBuilder result = new StringBuilder();
+		int m = 0; // 스택에 들어간 마지막 값
+
+		for (int i = 0; i < size; i++) {
+
+			int n = scan.nextInt();
+
+			// 스택에 들어간 마지막 값보다 원하는게 크다면
+			if (n > m) {
+
+				while (n > m) {
+					m++;
+					stack.push(m);
+					result.append("+\n");
+				}
+
+				stack.pop();
+				result.append("-\n");
+
+			} else {
+				boolean found = false;
+				while (!stack.isEmpty()) {
+
+					int top = stack.pop();
+					result.append("-\n");
+
+					if (top == n) {
+						found = true;
+						break;
+					}
+
+				}
+				if (!found) {
+					System.out.println("NO");
+					return;
+				}
+
+			}
+		}
+
+		System.out.println(result);
+	}
+}
