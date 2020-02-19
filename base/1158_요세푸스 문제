@@ -1,0 +1,42 @@
+링크드리스트, 큐
+
+아래 코드는 큐를 사용해서 구현하였음.
+시간 굉장히 짧게 짠 케이스는 index = (index+k)%queue.size(); 이런식으로 해서
+링크드 리스트로 했는데 가장 빠른 것 같음 :P
+
+
+=================================
+
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+
+public class Main {
+	public static void main(String[] args) throws IOException {
+		Scanner scan = new Scanner(System.in);
+		int n = scan.nextInt();
+		int k = scan.nextInt();
+
+		Queue<Integer> queue = new LinkedList<Integer>();
+		StringBuffer strBuf = new StringBuffer();
+		strBuf.append("<");
+
+		for (int i = 1; i <= n; i++)
+			queue.add(i);
+
+		while (!queue.isEmpty()) {
+			int loop = k;
+			while (loop > 1) {
+				queue.add(queue.poll());
+				loop--;
+			}
+			int a = (int) queue.poll();
+			strBuf.append(a + ", ");
+		}
+
+		strBuf.delete(strBuf.length() - 2, strBuf.length());
+		strBuf.append(">");
+		System.out.println(strBuf);
+	}
+}
