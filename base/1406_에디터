@@ -1,0 +1,67 @@
+스택 사용해서 O(N+M) : N은 초기 입력길이, M은 추가 입력 길이
+로 구현했으나 시간초과 발생.
+
+이유는 처음 입력값의 최대 길이가 100,000 인데, Scanner를 사용해서 난 것이었다. 충격 ㅠ
+이전에 들었던 말이 얼핏 생각나서 StringReader로 바꾸니 바로 해결.
+쓰기 좀 까다롭지만 잘 익혀놓으면 너무 유용할 것 같다 :)
+
+Point : Stack 2개쓰기, StringReader 쓰기
+(+) StringBuffer로 모아서 출력하니 속도가 절반 이상 줄었다.
+메모리도 충부히 줄일 수 있을 것 같지만 다음기회에 ㅎㅎ
+
+===================================
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Stack;
+
+public class Main {
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+		Stack<String> left = new Stack<String>();
+		Stack<String> right = new Stack<String>();
+		StringBuffer strBuf = new StringBuffer();
+
+		String line = br.readLine();
+		int loop = Integer.parseInt(br.readLine());
+
+		for (int j = 0; j < line.length(); j++) {
+			left.push(line.charAt(j) + "");
+		}
+
+		for (int i = 0; i < loop; i++) {
+			String[] input = br.readLine().split(" ");
+			String a = "";
+
+			if (input[0].equals("L")) {
+				if (!left.isEmpty()) {
+					a = left.pop();
+					right.push(a);
+				}
+			} else if (input[0].equals("D")) {
+				if (!right.isEmpty()) {
+					a = right.pop();
+					left.push(a);
+				}
+			} else if (input[0].equals("B")) {
+				if (!left.isEmpty()) {
+					left.pop();
+				}
+			} else if (input[0].equals("P")) {
+				left.push(input[1]);
+			}
+		}
+
+		while (!left.isEmpty()) {
+			right.push(left.pop());
+		}
+
+		while (!right.isEmpty()) {
+			strBuf.append(right.pop());
+		}
+
+		System.out.println(strBuf);
+	}
+}
