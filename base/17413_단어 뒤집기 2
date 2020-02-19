@@ -1,0 +1,56 @@
+스택 연습문제
+기존 단어뒤집기 1과 매우 유사.
+
+
+===============================
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Stack;
+
+public class Main {
+	static StringBuffer strBuf = new StringBuffer();
+
+	public static void main(String[] args) throws IOException {
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		Stack stack = new Stack();
+
+		String line = br.readLine();
+		boolean isStart = false;
+
+		for (int i = 0; i < line.length(); i++) {
+			char a = line.charAt(i);
+
+			if (a == '<') {
+				print(stack);
+				isStart = true;
+				strBuf.append(a);
+			} else if (a == '>') {
+				isStart = false;
+				strBuf.append(a);
+			} else if (isStart) {
+				strBuf.append(a);
+			} else {
+				// 공백, 단어의 끝.
+				if (a == ' ') {
+					print(stack);
+					strBuf.append(a);
+				} else {
+					stack.add(a);
+				}
+			}
+		}
+
+		print(stack);
+
+		System.out.println(strBuf);
+	}
+
+	static void print(Stack stack) {
+		while (!stack.isEmpty()) {
+			strBuf.append(stack.pop());
+		}
+	}
+}
