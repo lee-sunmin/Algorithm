@@ -1,0 +1,37 @@
+[수학] 최대공약수, 최소공배수
+
+최대 공약수(GCD)는 유클리드 호제법에 따라 GCD(a,b)=GCD(b,r)
+재귀로 풀이가 가능하다.  
+
+최소 공배수는 a*b = 최대공약수*최소공배수 를 사용하여
+최소공배수 = (a*b) / 최대공약수
+
+============================
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Scanner;
+
+public class Main {
+	public static void main(String[] args) throws IOException {
+
+		Scanner scan = new Scanner(System.in);
+		int a = scan.nextInt();
+		int b = scan.nextInt();
+
+		int iGcd = gcd(a, b);
+		System.out.println(iGcd);
+		System.out.println((a * b) / iGcd);
+	}
+
+	// 최소공배수
+	public static int gcd(int a, int b) {
+		if (b == 0) {
+			return a;
+		} else {
+			return gcd(b, a % b);
+		}
+	}
+
+}
