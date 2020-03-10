@@ -1,0 +1,36 @@
+최소값을 구해야 할 때 추천하는 방법!
+*-1로 초기화*
+
+==================================
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Scanner;
+import java.util.StringTokenizer;
+
+public class Main {
+	static int[] d = new int[1000001];
+	static int[] p = new int[10001];
+
+	public static void main(String[] args) throws IOException {
+		Scanner scan = new Scanner(System.in);
+
+		int n = scan.nextInt();
+
+		for (int i = 1; i <= n; i++) {
+			p[i] = scan.nextInt();
+			d[i] = -1;
+		}
+
+		for (int i = 1; i <= n; i++) {
+			for (int j = 1; j <= i; j++) {
+				if (d[i] == -1 || d[i] > d[i - j] + p[j])
+					d[i] = d[i - j] + p[j];
+			}
+		}
+
+		System.out.println(d[n]);
+	}
+
+}
