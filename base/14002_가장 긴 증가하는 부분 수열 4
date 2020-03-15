@@ -5,6 +5,16 @@
 배열로 링크드리스트? 만들었을때 느낌이랑 비슷하다 ㅎㅎ 
 
 ============================
+역추적 하는 부분을 재귀로도 구현 할 수 있다.
+
+void go(int p)
+
+if(v[p] == 0) return;
+
+go(v[p]);
+print(map[p]);
+
+============================
 
 import java.io.BufferedReader;
 import java.io.IOException;
