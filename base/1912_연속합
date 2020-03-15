@@ -1,0 +1,48 @@
+다이나믹프로그래밍 기본
+
+우선, 입력값이 좀 큰 것 같아서 bufferedReader 사용했는데 앞으로 자주 사용하려고 노력해야겠음.
+
+앞과 연속하는 경우/연속하지 않는 경우(본인만) 로 나눠서 풀이
+뒤와 연속하는 경우가 없는 이유는 n 번째에서 뒤와 연속하는 경우는 n+1번째의 앞과 연속하는 경우이기 때문임.
+
+D[i] = max(D[i-1]+A[i] , A[i])
+
+
+==================================
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+
+	public static void main(String[] args) throws IOException {
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int n = Integer.parseInt(br.readLine());
+
+		StringTokenizer strToken = new StringTokenizer(br.readLine());
+
+		int[] A = new int[n + 1];
+		int[] D = new int[n + 1];
+
+		// init
+		A[1] = Integer.parseInt(strToken.nextToken());
+		D[1] = A[1];
+		int result = A[1];
+
+		for (int i = 2; i <= n; i++) {
+			A[i] = Integer.parseInt(strToken.nextToken());
+			if (D[i - 1] + A[i] > A[i])
+				D[i] = D[i - 1] + A[i];
+			else
+				D[i] = A[i];
+
+			if (result < D[i])
+				result = D[i];
+		}
+		System.out.println(result);
+
+	}
+}
