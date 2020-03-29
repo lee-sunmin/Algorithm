@@ -1,0 +1,43 @@
+다이나믹 프로그래밍 기초
+
+* 꼭 다시 풀어보기 *
+
+
+==============================
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+	public static void main(String[] args) throws IOException {
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+		StringTokenizer strToken = new StringTokenizer(br.readLine());
+
+		int n = Integer.parseInt(strToken.nextToken());
+		int k = Integer.parseInt(strToken.nextToken());
+
+		long[][] d = new long[k + 1][n + 1];
+		d[0][0] = 1;
+		for (int i = 1; i <= k; i++) {
+			for (int j = 0; j <= n; j++) {
+				for (int l = 0; l <= j; l++) {
+					d[i][j] += d[i - 1][j - l];
+					d[i][j] %= 1000000000;
+				}
+			}
+		}
+
+		System.out.println(d[k][n]);
+		// print(d);
+	}
+
+	public static void print(int[] arr) {
+		for (int i = 1; i < arr.length; i++) {
+			System.out.print(arr[i] + " ");
+		}
+	}
+}
