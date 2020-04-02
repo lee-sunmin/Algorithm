@@ -1,0 +1,68 @@
+다이나믹 프로그래밍 연습
+==============================
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+
+	public static void main(String[] args) throws IOException {
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int loop = Integer.parseInt(br.readLine());
+
+		while (loop > 0) {
+
+			int n = Integer.parseInt(br.readLine());
+
+			int[][] D = new int[3][n + 1];
+			int[][] A = new int[3][n + 1];
+
+			for (int i = 1; i <= 2; i++) {
+				StringTokenizer strToken = new StringTokenizer(br.readLine());
+				for (int j = 1; j <= n; j++) {
+					A[i][j] = Integer.parseInt(strToken.nextToken());
+				}
+			}
+
+			// run
+			for (int i = 1; i <= n; i++) {
+				// 0
+				if (D[2][i - 1] > D[1][i - 1])
+					D[0][i] = D[2][i - 1];
+				else
+					D[0][i] = D[1][i - 1];
+
+				// 1
+				if (D[0][i - 1] > D[2][i - 1])
+					D[1][i] = D[0][i - 1] + A[1][i];
+				else
+					D[1][i] = D[2][i - 1] + A[1][i];
+
+				// 2
+				if (D[0][i - 1] > D[1][i - 1])
+					D[2][i] = D[0][i - 1] + A[2][i];
+				else
+					D[2][i] = D[1][i - 1] + A[2][i];
+			}
+
+			int res = D[0][n];
+			for (int i = 1; i <= 2; i++) {
+				if (res < D[i][n])
+					res = D[i][n];
+			}
+
+			System.out.println(res);
+
+			loop--;
+		}
+	}
+
+	public static void print(int[] arr) {
+		for (int i = 1; i < arr.length; i++) {
+			System.out.print(arr[i] + " ");
+		}
+	}
+}
