@@ -1,0 +1,68 @@
+다이나믹 프로그래밍 연습
+
+==============================
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+
+	public static void main(String[] args) throws IOException {
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int n = Integer.parseInt(br.readLine());
+
+		int[][] map = new int[n + 1][4];
+		int[][] d = new int[n + 1][4];
+
+		for (int i = 1; i <= n; i++) {
+			StringTokenizer strToken = new StringTokenizer(br.readLine());
+			int j = 1;
+			while (strToken.hasMoreTokens()) {
+				int m = Integer.parseInt(strToken.nextToken());
+				map[i][j] = m;
+				d[i][j] = m;
+				j++;
+			}
+		}
+
+		// run
+		for (int i = 1; i <= n; i++) {
+			// 1
+			if (d[i - 1][2] < d[i - 1][3])
+				d[i][1] = d[i - 1][2] + map[i][1];
+			else
+				d[i][1] = d[i - 1][3] + map[i][1];
+
+			// 2
+			if (d[i - 1][1] < d[i - 1][3])
+				d[i][2] = d[i - 1][1] + map[i][2];
+			else
+				d[i][2] = d[i - 1][3] + map[i][2];
+
+			// 3
+			if (d[i - 1][1] < d[i - 1][2])
+				d[i][3] = d[i - 1][1] + map[i][3];
+			else
+				d[i][3] = d[i - 1][2] + map[i][3];
+		}
+
+		int res = Integer.MAX_VALUE;
+
+		for (int i = 1; i <= 3; i++) {
+			if (d[n][i] < res)
+				res = d[n][i];
+		}
+
+		System.out.println(res);
+
+	}
+
+	public static void print(int[] arr) {
+		for (int i = 1; i < arr.length; i++) {
+			System.out.print(arr[i] + " ");
+		}
+	}
+}
