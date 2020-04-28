@@ -5,6 +5,123 @@
 * 이 문제만 해결하면 대부분의 재귀 문제가 쉽게 풀린다.
 */
 
+=======================================2020 풀이
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Queue;
+import java.util.Scanner;
+
+public class Main {
+
+	static int N;
+	static int M;
+	static int H;
+	static int[][] map;
+	static int res;
+	static int k;
+
+	public static void main(String[] args) throws IOException {
+		Scanner scan = new Scanner(System.in);
+
+		N = scan.nextInt();
+		M = scan.nextInt();
+		H = scan.nextInt();
+
+		map = new int[H + 1][N + 1];
+
+		for (int i = 0; i < M; i++) {
+			int x = scan.nextInt();
+			int y = scan.nextInt();
+			map[x][y] = y + 1;
+			map[x][y + 1] = y;
+		}
+
+		res = 0;
+
+		if (check()) {
+			System.out.println(res);
+			return;
+		}
+
+		k = 1;
+		for (int i = 1; i <= H - 1; i++) {
+			for (int j = 1; j <= N - 1; j++) {
+				while (k <= 3) {
+					dfs(k, i, j);
+					k++;
+					if (res != 0) {
+						System.out.println(res);
+						return;
+					}
+				}
+			}
+		}
+
+		System.out.println(-1);
+	}
+
+	public static void dfs(int cnt, int x, int y) {
+		if (cnt == 0) {
+			if (check()) {
+				res = k;
+				return;
+			}
+		} else {
+			int i = x;
+			for (int j = y; j <= N - 1; j++) {
+				for (; i <= H; i++) {
+					if (map[i][j] == 0 && map[i][j + 1] == 0) {
+						map[i][j] = j + 1;
+						map[i][j + 1] = j;
+						dfs(cnt - 1, i, j);
+						map[i][j] = 0;
+						map[i][j + 1] = 0;
+					}
+				}
+				i = 1;
+			}
+		}
+	}
+
+	public static boolean check() {
+
+		for (int i = 1; i <= N; i++) {
+			int x = 1;
+			int y = i;
+
+			while (x <= H) {
+				if (map[x][y] != 0) {
+					y = map[x][y];
+				}
+				x++;
+			}
+
+			if (y != i)
+				return false;
+		}
+
+		return true;
+	}
+}
+
+class Node {
+	int x;
+	int y;
+
+	Node(int x, int y) {
+
+		this.x = x;
+		this.y = y;
+	}
+}
+
+
+
+
+=======================================2019 풀이
 import java.util.Scanner;
 
 public class Main {
