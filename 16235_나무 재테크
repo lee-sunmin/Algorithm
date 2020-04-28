@@ -1,7 +1,187 @@
 정렬해서 넣어주는거 안하면 시간초과.
 
-=============================
+=============================(2020년 풀이)
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Queue;
+import java.util.Scanner;
 
+public class Main {
+	static int N;
+	static int M;
+	static int K;
+	static int[][] map;
+	static int[][] dmap;
+	static ArrayList<Node>[][] tree;
+	static int[] dx = { -1, -1, -1, 0, 0, 1, 1, 1 };
+	static int[] dy = { -1, 0, 1, -1, 1, -1, 0, 1 };
+	static int colSize = 0;
+
+	public static void main(String[] args) throws IOException {
+		Scanner scan = new Scanner(System.in);
+		N = scan.nextInt();
+		M = scan.nextInt();
+		K = scan.nextInt();
+		map = new int[N + 2][N + 2];
+		dmap = new int[N + 2][N + 2];
+		tree = new ArrayList[N + 2][N + 2];
+
+		for (int i = 0; i <= N + 1; i++) {
+			for (int j = 0; j <= N + 1; j++) {
+				if (i == 0 || j == 0 || i == N + 1 || j == N + 1)
+					map[i][j] = -1;
+				else {
+					dmap[i][j] = scan.nextInt();
+					map[i][j] = 5;
+					tree[i][j] = new ArrayList<Node>();
+				}
+			}
+		}
+
+		while (M > 0) {
+			int x = scan.nextInt();
+			int y = scan.nextInt();
+
+			int age = scan.nextInt();
+			if (tree[x][y].size() == 0) {
+				tree[x][y].add(new Node(age, 0));
+			} else {
+
+				for (int i = 0; i < tree[x][y].size(); i++) {
+					if (tree[x][y].get(i).age >= age) {
+						tree[x][y].add(i, new Node(age, 0));
+						break;
+					}
+				}
+				tree[x][y].add(new Node(age, 0));
+			}
+			M--;
+		}
+
+//		print(map);
+//		print(dmap);
+
+		while (K > 0) {
+
+			// spring
+
+			for (int i = 1; i <= N; i++) {
+				for (int j = 1; j <= N; j++) {
+					if (tree[i][j] != null && tree[i][j].size() > 0) {
+						ArrayList<Node> arr = tree[i][j];
+						Iterator iter = arr.iterator();
+						while (iter.hasNext()) {
+							Node tmp = (Node) iter.next();
+
+							if (map[i][j] < tmp.age) {
+								tmp.setDead();
+							} else {
+								map[i][j] -= tmp.age;
+								tmp.age++;
+							}
+						}
+					}
+				}
+			}
+
+			// summer
+			for (int i = 1; i <= N; i++) {
+				for (int j = 1; j <= N; j++) {
+					if (tree[i][j] != null && tree[i][j].size() > 0) {
+						ArrayList<Node> arr = tree[i][j];
+						Iterator iter = arr.iterator();
+						while (iter.hasNext()) {
+							Node tmp = (Node) iter.next();
+							if (tmp.state == 1) {
+								map[i][j] += tmp.age / 2;
+								iter.remove();
+							}
+						}
+					}
+				}
+			}
+
+			// fall
+			for (int i = 1; i <= N; i++) {
+				for (int j = 1; j <= N; j++) {
+					if (tree[i][j] != null && tree[i][j].size() > 0) {
+						ArrayList<Node> arr = tree[i][j];
+						Iterator iter = arr.iterator();
+						while (iter.hasNext()) {
+							Node tmp = (Node) iter.next();
+							if (tmp.age % 5 == 0) {
+								for (int k = 0; k < 8; k++) {
+									int x = i + dx[k];
+									int y = j + dy[k];
+									if (map[x][y] != -1) {
+										tree[x][y].add(0, new Node(1, 0));
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			// winter
+			for (int i = 1; i <= N; i++) {
+				for (int j = 1; j <= N; j++) {
+					map[i][j] += dmap[i][j];
+				}
+			}
+
+			K--;
+		}
+
+		int res = 0;
+		for (int i = 1; i <= N; i++) {
+			for (int j = 1; j <= N; j++) {
+				if (tree[i][j] != null && tree[i][j].size() > 0) {
+					res += tree[i][j].size();
+				}
+			}
+		}
+		System.out.println(res);
+	}
+
+	public static void print(int[] arr) {
+		for (int i = 1; i < arr.length; i++) {
+			System.out.print(arr[i] + " ");
+		}
+	}
+
+	public static void print(int[][] arr) {
+		for (int i = 0; i < arr.length; i++) {
+			for (int j = 0; j < arr[0].length; j++) {
+				System.out.print(arr[i][j] + " ");
+			}
+			System.out.println();
+		}
+	}
+}
+
+class Node {
+	int age;
+	int state;// 0 is alive
+
+	Node(int age, int state) {
+
+		this.age = age;
+		this.state = state;
+	}
+
+	void setDead() {
+		state = 1;
+	}
+}
+
+
+
+
+=============================(2019년 풀이)
 
 import java.util.*;
 
