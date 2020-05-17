@@ -1,0 +1,36 @@
+minVal 쓰는게 핵심 포인트
+생각하기
+==============
+
+class Solution {
+    public int[] solution(int N, int[] A) {
+        // write your code in Java SE 8
+        int[] res = new int[N];
+        int max = 0;
+        int minVal = 0;
+        
+        for(int i = 0; i < A.length; i++)
+        {
+            int tmp = A[i];
+            if(tmp >= 1 && tmp <=N)
+            {
+                if(res[tmp-1] < minVal)
+                    res[tmp-1] = minVal;
+                
+                res[tmp-1] ++;
+                if(res[tmp-1] > max)
+                max = res[tmp-1];
+            }else if(tmp == N+1)
+            {
+                minVal = max;
+            }
+        }
+        
+        for(int i=0;i<res.length;i++)
+        {
+            if(res[i] < minVal)
+            res[i] = minVal;
+        }
+        return res;
+    }
+}
