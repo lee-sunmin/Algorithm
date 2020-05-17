@@ -1,0 +1,26 @@
+class Solution {
+    public int solution(int[] A) {
+        // write your code in Java SE 8
+        
+        int[] L = new int[A.length+1];
+        int[] R = new int[A.length+1];
+        
+        for(int i=1;i<A.length;i++){
+            L[i] = L[i-1]+A[i-1];
+        }
+        
+        for(int i=A.length-1; i>0; i--){
+            R[i] = R[i+1]+A[i];
+        }
+        
+        int min = Integer.MAX_VALUE;
+        for(int i=1; i<A.length; i++){
+            if(min > Math.abs(L[i]-R[i]))
+            {
+                min = Math.abs(L[i]-R[i]);
+            }
+        }
+        
+        return min;
+    }
+}
