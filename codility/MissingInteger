@@ -1,0 +1,28 @@
+class Solution {
+    public int solution(int[] A) {
+        // write your code in Java SE 8
+        boolean[] visit = new boolean[1000001];
+        int min = Integer.MAX_VALUE;
+        for(int i=0; i<A.length; i++){
+            int tmp = A[i];
+            if(tmp >= 1)
+            {
+                visit[tmp] = true;
+                if(tmp < min)
+                    min = tmp;
+            }
+        }
+        
+        if(min == Integer.MAX_VALUE)
+            return 1;
+        
+        for(int i=1; i<=A.length+1; i++)
+        {
+            if(!visit[i])
+            {
+                return i;
+            }
+        }
+        return 1;
+    }
+}
