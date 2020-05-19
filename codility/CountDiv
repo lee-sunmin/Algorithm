@@ -1,0 +1,25 @@
+왜 나머지에 꽂혔는진 모르겠지만.. 나누기 쓰면 더 쉽게 풀 수 있었음
+은근 헤맴
+
+
+class Solution {
+    public int solution(int A, int B, int K) {
+        // write your code in Java SE 8
+        
+        int start = A+(A%K);
+        int end = B-(B%K);
+        
+        if(start>end || end<start)
+        return 0;
+        
+        int res = (end/K)-(start/K)+1;
+        
+        return res;
+    }
+}
+
+=====
+
+타인 코드
+int res = B/K - A/K;
+res += A%K == 0 ? 1 : 0;
