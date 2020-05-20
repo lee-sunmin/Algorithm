@@ -2,8 +2,8 @@
 범위가 넓어서 2차원 배열 생각없이 만들면 시간초과
 빼는 방법 사용했는데 참신하고 좋았다. 다른 사람들 코드 참고해서 겨우 이해함
 
-======================================================
 
+~~~ java
 class Solution {
     public int[] solution(String S, int[] P, int[] Q) {
         // write your code in Java SE 8
@@ -52,10 +52,10 @@ class Solution {
             }
         }
         
-        return result;
-        
+        return result;     
     }
 }
+~~~
 
 ![sol](https://user-images.githubusercontent.com/17976251/82444546-5eac7880-9ade-11ea-81f4-6e1a8629e0e3.jpeg)
 
