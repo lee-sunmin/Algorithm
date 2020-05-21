@@ -1,0 +1,16 @@
+~~~
+이렇게 간단한걸.. 그땐 왜 몰랐을꼬 ...
+# n개 번째의 피보나치 수를 구하라(arr[n])
+~~~
+
+
+~~~ java
+public static void fib(int n) {
+		if (n == 1) {
+			return;
+		} else if (n >= 2) {
+			fib(n - 1);
+			arr[n] = arr[n - 1] + arr[n - 2];
+		}
+	}
+~~~
