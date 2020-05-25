@@ -1,0 +1,100 @@
+
+//2번문제 - 기호
+
+import java.util.*;
+import java.util.Scanner;
+
+public class Main {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String expression = "100-200*300-500+20";
+		long result = solution(expression);
+		System.out.println(result);
+	}
+
+	public static long solution(String expression) {
+		long answer = 0;
+		int[][] map = { { 1, 2, 3 }, { 1, 3, 2 }, { 2, 1, 3 }, { 2, 3, 1 }, { 3, 1, 2 }, { 3, 2, 1 } };
+		ArrayList<Long> arr = new ArrayList<Long>();
+		ArrayList<String> expr = new ArrayList<String>();
+
+		String st = expression;
+		StringTokenizer strToken = new StringTokenizer(st, "+-*");
+
+		while (strToken.hasMoreTokens()) {
+			String m = strToken.nextToken();
+			arr.add(Long.parseLong(m));
+		}
+
+		strToken = new StringTokenizer(st, "0123456789");
+
+		while (strToken.hasMoreTokens()) {
+			String m = strToken.nextToken();
+			expr.add(m);
+		}
+
+		for (int i = 0; i < map.length; i++) {
+
+			ArrayList<Long> arrtmp = new ArrayList<Long>();
+			for (int k = 0; k < arr.size(); k++) {
+				arrtmp.add(arr.get(k));
+			}
+			ArrayList<String> exprtmp = new ArrayList<String>();
+			for (int k = 0; k < expr.size(); k++) {
+				exprtmp.add(expr.get(k));
+			}
+			for (int m = 3; m >= 1; m--) {
+				if (map[i][0] == m) {
+					// + = 3
+					while (exprtmp.contains("+")) {
+						for (int k = 0; k < exprtmp.size(); k++) {
+							if (exprtmp.get(k).equals("+")) {
+								long res = arrtmp.get(k) + arrtmp.get(k + 1);
+								arrtmp.remove(k);
+								arrtmp.remove(k);
+								arrtmp.add(k, res);
+								exprtmp.remove(k);
+								break;
+							}
+						}
+					}
+				} else if (map[i][1] == m) {
+					// - = 3
+					while (exprtmp.contains("-")) {
+						for (int k = 0; k < exprtmp.size(); k++) {
+							if (exprtmp.get(k).equals("-")) {
+								long res = arrtmp.get(k) - arrtmp.get(k + 1);
+								arrtmp.remove(k);
+								arrtmp.remove(k);
+								arrtmp.add(k, res);
+								exprtmp.remove(k);
+								break;
+							}
+						}
+					}
+				} else if (map[i][2] == m) {
+					while (exprtmp.contains("*")) {
+						for (int k = 0; k < exprtmp.size(); k++) {
+							if (exprtmp.get(k).equals("*")) {
+								long res = arrtmp.get(k) * arrtmp.get(k + 1);
+								arrtmp.remove(k);
+								arrtmp.remove(k);
+								arrtmp.add(k, res);
+								exprtmp.remove(k);
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			long res = Math.abs(arrtmp.get(0));
+			if (res > answer)
+				answer = res;
+		}
+
+		return answer;
+	}
+
+}
