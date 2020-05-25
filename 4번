@@ -1,0 +1,113 @@
+
+//4번문제-ㄱ꺾기
+
+import java.util.*;
+import java.util.Scanner;
+
+public class Main {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int[][] board = { { 0, 0, 0, 0, 0, 0, 0, 1 }, { 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 1, 0, 0 },
+				{ 0, 0, 0, 0, 1, 0, 0, 0 }, { 0, 0, 0, 1, 0, 0, 0, 1 }, { 0, 0, 1, 0, 0, 0, 1, 0 },
+				{ 0, 1, 0, 0, 0, 1, 0, 0 }, { 1, 0, 0, 0, 0, 0, 0, 0 } };
+
+		int result = solution(board);
+		System.out.println(result);
+	}
+
+	public static int solution(int[][] board) {
+		int answer = 0;
+		int[] dx = { -1, 1, 0, 0 };
+		int[] dy = { 0, 0, -1, 1 };
+		int size = board.length;
+		int[][] dist = new int[size][size];
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				if (i == 0 && j == 0) {
+					dist[i][j] = 0;
+				} else {
+					dist[i][j] = -2;
+				}
+			}
+		}
+		Queue<Node> q = new LinkedList<Node>();
+		q.add(new Node(0, 0, -1));
+
+		while (!q.isEmpty()) {
+			Node node = q.poll();
+			for (int k = 0; k < 4; k++) {
+				int x = node.x + dx[k];
+				int y = node.y + dy[k];
+
+				if (x >= 0 && y >= 0 && x < size && y < size && board[x][y] == 0) {
+
+					int money = 100;
+					if (dist[node.x][node.y] != -2) {
+						money += node.money;
+					}
+
+					if (node.k == 0 || node.k == 1) {
+						if (k == 2 || k == 3) {
+							money += 500;
+						}
+					} else if (node.k == 2 || node.k == 3) {
+						// +500
+						if (k == 0 || k == 1) {
+							money += 500;
+						}
+					}
+
+					if (dist[x][y] == -2 || dist[x][y] >= money) {
+						dist[x][y] = money;
+						q.add(new Node(x, y, k, money));
+					} else if (money - dist[x][y] < 600) {
+						q.add(new Node(x, y, k, money));
+					}
+				}
+
+			}
+		}
+
+		answer = dist[size - 1][size - 1];
+		return answer;
+	}
+
+	public static void print(int[][] arr) {
+		for (int i = 0; i < arr.length; i++) {
+			for (int j = 0; j < arr.length; j++) {
+				System.out.print(arr[i][j] + "\t");
+			}
+			System.out.println();
+		}
+		System.out.println();
+		System.out.println();
+		System.out.println();
+	}
+
+}
+
+class Node {
+	int x;
+	int y;
+	int k;
+	int money;
+
+	Node(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	Node(int x, int y, int k) {
+		this.x = x;
+		this.y = y;
+		this.k = k;
+	}
+
+	Node(int x, int y, int k, int money) {
+		this.x = x;
+		this.y = y;
+		this.k = k;
+		this.money = money;
+	}
+}
